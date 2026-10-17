@@ -58,10 +58,22 @@ DSH **没有中心索引**：市场是一个自托管的 JSON 索引文件，用
 
 把 `market/` 目录放到任意静态主机（GitHub Pages / GitLab Pages / 对象存储）即可，相对图标相对索引 URL 解析。
 
-## 四、当前待办
+## 四、收录状态
+
+| 渠道 | 机制 | 状态 |
+|---|---|---|
+| **[dsh.so](https://www.dsh.so/submit/)** | 网页表单：拉取 → 格式校验 → 安全扫描 → 生成 registry 条目 → 提交审核 | ✅ **已提交**（2026-10-18 02:25 +08）：格式校验全 Pass（public repo / README / MIT / `dsh` manifest / id 合法），页面显示 `✓ Submitted` |
+| **[dshbase](https://dshbase.com/)** | 提 issue → 人工审核收录；自动路径只收 topic 中 ★≥100 的仓库 | ✅ 已提交 [ylwl1997/dshbase#161](https://github.com/ylwl1997/dshbase/issues/161)，待审核 |
+| **[awesome-dsh-plugin](https://github.com/billLiao/awesome-dsh-plugin)** | 脚本按 GitHub topic 自动收集 + 生成分类；也接受 PR | ✅ PR [billLiao/awesome-dsh-plugin#20](https://github.com/billLiao/awesome-dsh-plugin/pull/20)（另：topic 自动同步也会收录） |
+| **dshfind / dshplugin.store / DSH Plugin Radar** | 每日同步 GitHub topic `dsh-plugin`，无需提交 | ✅ 条件已满足（公开仓库 + topic + `dsh.bundle` + LICENSE），一天内自动出现 |
+| **官方插件市场** | 自托管 JSON 索引（format 1） | ✅ 本仓库 `market/index.json`（GitHub Pages 托管，官方校验器通过） |
+
+## 五、当前待办
 
 - [x] 索引格式 1 通过官方校验器；GitHub Pages 已托管 `market/index.json`
 - [x] `v0.1.0` 标签已打（官方市场生成器按 `vX.Y.Z` 识别版本）
 - [x] npm 发布 `dsh-plugin-resolver@0.1.0`（`latest` = 0.1.0）
 - [x] 市场索引已切到 npm 源（官方推荐）
-- [ ] （可选）在 awesome-dsh-plugin / dshbase 提交收录（按 GitHub topic `dsh-plugin` 抓取）
+- [x] dsh.so 提交（格式校验 Pass，`✓ Submitted`）
+- [x] dshbase issue、awesome-dsh-plugin PR 已提交
+- [ ] 等 dsh.so / dshbase 审核与 awesome PR 合并（自动渠道 1 天内自行收录）
