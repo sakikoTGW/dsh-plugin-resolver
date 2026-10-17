@@ -9,10 +9,12 @@
 [![license](https://img.shields.io/github/license/sakikoTGW/dsh-plugin-resolver)](LICENSE)
 [![node](https://img.shields.io/badge/node-%3E%3D20-339933?logo=node.js&logoColor=white)](package.json)
 [![DSH](https://img.shields.io/badge/DSH-0.2.0--rc.2%2B-4d6bfe)](https://github.com/deepseek-ai/deepseek-harness)
-[![tests](https://img.shields.io/badge/tests-29%20checks%20passing-brightgreen)](test)
+[![tests](https://img.shields.io/badge/tests-35%20checks%20passing-brightgreen)](test)
 [![stars](https://img.shields.io/github/stars/sakikoTGW/dsh-plugin-resolver?style=social)](https://github.com/sakikoTGW/dsh-plugin-resolver/stargazers)
 
 > **装两个典型插件：工具操作 −87%（45 → 6 次），实际耗时 −80%（20+ 分钟 → 约 3 分钟），失败重试 0。**
+>
+> 基线是"同一个 agent、没装 resolver 时的手工流程"，不是官方 Discover 的点击次数——对点 UI 的人，市场已经够好；这个插件服务的是**把安装交给 agent 的人**。
 >
 > 搜索 → 同名消歧 → 按当前内核选兼容版本 → 安装（registry / GitHub 源码构建）→ 装后校验，一次调用走完。
 > host-only 插件，给 DSH 加 4 个模型工具，不注册服务、没有前端、纯 ESM 免构建。
@@ -23,7 +25,7 @@
 
 **场景**：给一台 DSH 装两个真实插件——`dsh-better-sidebar`（npm 上的 latest 不保证兼容当前内核）和 `dsh-browser`（6 个同名 owner、GitHub-only、还要本地构建扩展）。当时在 agent 侧，这是这样一串手工活：
 
-| 实际会发生的事 | 代价（真机实测） |
+| 实际会发生的事 | 代价（真机实测，agent 手工路径） |
 |---|---|
 | 目录在 GitHub Pages 上，拉一次 6.4 MB | **91 s**，模型还得读一堆条目 |
 | 同一个名字有多个 owner（`dsh-browser` 有 6 个） | 靠猜，猜错就装错来源 |
@@ -51,7 +53,25 @@ flowchart LR
     H --> O["如实告知：刷新 / 重启 / 已生效"]
 ```
 
-## 30 秒上手
+## 先装一次，之后都能一句话
+
+第一次仍需把 resolver 装进来（约 10 秒）；从下一次安装开始，用户只需要说"帮我装 xxx"。
+
+- 官方版：`插件 → 实验性插件 → 打开自定义插件市场 → 发现 → 添加索引源`（URL 见下），安装 `dsh-plugin-resolver`；
+- 或者 CLI（profile 名以你的 DSH 安装为准）：
+
+```sh
+dsh plugin --profile <profile> add dsh-plugin-resolver
+```
+
+装完重启一次宿主；之后：
+
+> "帮我装 dsh-browser" → 列出 6 个同名候选，要求 `owner=`，不猜；
+> "装 dsh-builtin-browser" → 选到与你内核兼容的版本并装好。
+
+明确的包直接装；歧义名、GitHub 源码、未知来源会先给出解析计划。它不是插件市场的替代品，而是"把安装交给 agent"的那条路径。
+
+## 三种安装方式（任选）
 
 要求 **DSH `>=0.2.0-rc.2 <0.3.0`**（已在 `engines.dsh` 声明）。纯 JS、无构建、无 install 脚本，三种方式都不需要 `allowBuilds` 授权：
 
@@ -63,11 +83,6 @@ dsh plugin --profile <profile> add github:sakikoTGW/dsh-plugin-resolver#<commit>
 # tarball
 npm pack && dsh plugin --profile <profile> add ./dsh-plugin-resolver-0.1.2.tgz
 ```
-
-装完（宿主重启后最稳）直接说：
-
-> "帮我装 dsh-browser" → 它会先问/列出 6 个同名候选；
-> "装 dsh-builtin-browser" → 自动选到与你内核兼容的版本并装好。
 
 插件市场（Discover）索引（在插件页打开实验性「自定义插件市场」，然后 `插件 → 发现 → 添加索引源`）：
 
@@ -146,15 +161,17 @@ logic/             目录 / 版本 / 兼容 / 安装编排（每次调用按 mti
 
 ## 效果
 
-| 指标 | 手工路径 | 本插件 | 来源 |
+| 指标 | agent 手工路径（未装 resolver） | 本插件 | 来源 |
 |---|---|---|---|
 | 工具调用（装 1 歧义 + 1 GitHub-only 插件） | ≈ 45 次 | **≈ 6 次** | [BENCHMARK](BENCHMARK.md) |
-| 决策链耗时 | — | **1.23 s / 9 个决策任务** | benchmark.mjs |
-| 目录获取 | 91.06 s / 6.4 MB | **0.94 s / 2 请求** | benchmark.mjs |
+| 决策链耗时 | — | **1.05 s / 9 个决策任务** | benchmark.mjs（官方 0.2.1-rc.2） |
+| 目录获取 | 91.06 s / 6.4 MB | **0.86 s / 2 请求** | benchmark.mjs（官方 0.2.1-rc.2） |
 | 安装失败重试 | 2 次 90 s 超时 | **0 次** | 会话日志 |
 | 安装后校验调用 | 2 次额外探测 | **0 次** | benchmark.mjs |
 
-消融测试（逐项拆能力）见 [ABLATION.md](ABLATION.md)：同名 287 组、naive 会选错 51 组；8 个真实包中 2 个 latest 不兼容；镜像元数据延迟比 60.3×；GitHub-only 入口探针 404；静默失败可检测；逻辑热加载 3 ms vs 重启 30–40 s。
+> 基线是 **agent 手工流程**，不是官方 Discover 的点击次数：对点 UI 的人市场已经够用，这个插件服务的是把安装交给 agent 的人。
+
+消融测试（逐项拆能力）见 [ABLATION.md](ABLATION.md)：同名 287 组、naive 会选错 51 组；8 个真实包中 2 个 latest 不兼容；镜像元数据延迟比 59.6–78.8×（随线路波动）；GitHub-only 入口探针 404；静默失败可检测；逻辑热加载 2 ms vs 重启 30–40 s。
 
 ```sh
 node test/benchmark.mjs   # 插件路径基准
