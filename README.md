@@ -68,6 +68,12 @@ npm pack && dsh plugin --profile web add ./dsh-plugin-resolver-0.1.0.tgz
 > "帮我装 dsh-browser" → 它会先问/列出 6 个同名候选；
 > "装 dsh-builtin-browser" → 自动选到与你内核兼容的版本并装好。
 
+官方插件市场索引（需先打开实验性「自定义插件市场」，然后 `插件 → 发现 → 添加索引源`）：
+
+```text
+https://sakikoTGW.github.io/dsh-plugin-resolver/market/index.json
+```
+
 真实调用长这样：
 
 ```text
