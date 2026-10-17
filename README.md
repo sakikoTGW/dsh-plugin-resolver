@@ -11,15 +11,18 @@
 [![tests](https://img.shields.io/badge/tests-29%20checks%20passing-brightgreen)](test)
 [![stars](https://img.shields.io/github/stars/sakikoTGW/dsh-plugin-resolver?style=social)](https://github.com/sakikoTGW/dsh-plugin-resolver/stargazers)
 
-> host-only 插件：给 DSH 加 4 个模型工具，不注册服务、没有前端、纯 ESM 免构建。
+> **装两个典型插件：工具操作 −87%（45 → 6 次），实际耗时 −80%（20+ 分钟 → 约 3 分钟），失败重试 0。**
+>
+> 搜索 → 同名消歧 → 按当前内核选兼容版本 → 安装（registry / GitHub 源码构建）→ 装后校验，一次调用走完。
+> host-only 插件，给 DSH 加 4 个模型工具，不注册服务、没有前端、纯 ESM 免构建。
 
 ---
 
 ## 为什么要它
 
-DSH 生态已有 5,000+ 插件，但"帮我装一个插件"在 agent 侧本来是一串手工活：
+**场景**：给一台 DSH `0.2.0-rc.2` 装两个真实插件——`dsh-better-sidebar`（npm 上的 latest 要求更高内核）和 `dsh-browser`（6 个同名 owner、GitHub-only、还要本地构建扩展）。当时在 agent 侧，这是这样一串手工活：
 
-| 实际会发生的事 | 代价（本仓库真机实测） |
+| 实际会发生的事 | 代价（真机实测） |
 |---|---|
 | 目录在 GitHub Pages 上，拉一次 6.4 MB | **91 s**，模型还得读一堆条目 |
 | 同一个名字有多个 owner（`dsh-browser` 有 6 个） | 靠猜，猜错就装错来源 |
@@ -146,17 +149,6 @@ npm run ablate  # 消融
 - `test/harness.mjs`：假 Cordis ctx + 假 pluginManager 驱动真实工具体
 - `test/benchmark.mjs` / `test/ablation.mjs`：真实目录 + 真实 registry 的测量脚本
 - CI：每次 push 跑 `test`；`ablation` 走手动/每周定时任务
-
-## 与同类插件的关系
-
-| 插件 | 定位 | 与本插件互补之处 |
-|---|---|---|
-| [dshmarket](https://github.com/dsh-market/dsh-market) | GUI 市场：浏览/一键装/更新/回滚/hot mount | 适合人类操作；agent 无法调用 |
-| [dsh-find-plugin](https://github.com/awesome-dsh-plugin/dsh-find-plugin) | agent 侧发现，返回现成安装命令 | 停在"给命令"，不选版本、不安装、不校验 |
-| [dsh-web/plugin-manager](https://github.com/zhu1090093659/dsh-web/tree/main/packages/dsh-plugin-manager) | 官方 Plugins 页的更新与兼容门（要求 DSH ≥ 0.2.1-rc.2） | 聚焦已装插件更新 |
-| [dsh-plugin-gating-hub](https://github.com/Noob-stupid/dsh-plugin-gating-hub) | 升级门禁 / 回滚 / 自动禁用 | 保住升级过程，不做发现与选择 |
-
-本插件是唯一把"发现 + 版本求解 + 安装（含源码构建）+ 装后校验"串成**一次 agent 调用**的。
 
 ## 已知限制
 
