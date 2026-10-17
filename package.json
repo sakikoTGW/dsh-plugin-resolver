@@ -1,0 +1,27 @@
+{
+  "name": "dsh-plugin-resolver",
+  "version": "0.1.0",
+  "description": "Resolve, version-pin and install DSH plugins: catalog search, DSH-compatible version selection, GitHub-source builds, and post-install health verification.",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "host",
+    "logic",
+    "cordis.patch.yml"
+  ],
+  "scripts": {
+    "test": "node test/selftest.mjs && node test/harness.mjs",
+    "bench": "node test/benchmark.mjs"
+  },
+  "license": "MIT",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}

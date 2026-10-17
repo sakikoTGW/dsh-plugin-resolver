@@ -1,0 +1,19 @@
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Offline checks (semver, version selection, catalog search)
+        run: node test/selftest.mjs
+      - name: Host-free harness (tool surface against a fake host)
+        run: node test/harness.mjs
