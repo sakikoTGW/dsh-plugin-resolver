@@ -43,8 +43,14 @@ logic/             目录/版本/兼容/安装编排（每次调用按 mtime 重
 ## 安装
 
 ```sh
-dsh plugin --profile web add dsh-plugin-resolver        # 发布到 registry 后
-dsh plugin --profile web add link:/abs/path/to/dsh-plugin-resolver   # 本地开发
+# 从 GitHub 安装（纯 JS，无需构建）
+dsh plugin --profile web add github:sakikoTGW/dsh-plugin-resolver
+
+# 发布到 registry 后
+dsh plugin --profile web add dsh-plugin-resolver
+
+# 本地开发
+dsh plugin --profile web add link:/abs/path/to/dsh-plugin-resolver
 ```
 
 host-only，没有 client 半，装完**不需要**刷新浏览器即可让工具生效（宿主重启后最稳）。
