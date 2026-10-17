@@ -34,7 +34,7 @@
           "source": {
             "type": "git",
             "url": "https://github.com/sakikoTGW/dsh-plugin-resolver",
-            "commit": "f313726fb2a32cd16470a70cb688b8dedacf068f"
+            "commit": "3fc82fb63573f5b1c34e3b4f6fce3c7d30616397"
           },
           "engines": {
             "dsh": ">=0.2.0-rc.2 <0.3.0"

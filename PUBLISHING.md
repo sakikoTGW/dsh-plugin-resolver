@@ -46,7 +46,7 @@
 DSH **没有中心索引**：市场是一个自托管的 JSON 索引文件，用户在 `插件 → 发现 → 添加索引源` 里填 URL（需先打开实验性的**自定义插件市场**组合包）。本仓库提供了 [`market/index.json`](market/index.json)，并已：
 
 - ✅ 用官方校验器 `@deepseek-ai/dsh-plugin-market-index@0.2.1-alpha.4` 的 `parseMarketIndex` 校验通过
-- ✅ 用官方 `marketInstallTarget` 复核安装 spec：`git+https://github.com/sakikoTGW/dsh-plugin-resolver.git#f313726fb2a32cd16470a70cb688b8dedacf068f`
+- ✅ 用官方 `marketInstallTarget` 复核安装 spec：`git+https://github.com/sakikoTGW/dsh-plugin-resolver.git#3fc82fb63573f5b1c34e3b4f6fce3c7d30616397`
 - ✅ 通过 GitHub Pages 托管：**https://sakikoTGW.github.io/dsh-plugin-resolver/market/index.json**（页面 200，直出 JSON）
 
 索引规则要点（违反任意一条会**整个索引被拒**，并显示违规值的 JSON 路径）：
