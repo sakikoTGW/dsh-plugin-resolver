@@ -1,0 +1,46 @@
+{
+  "format": 1,
+  "title": {
+    "en": "DSH Plugin Resolver",
+    "zh": "DSH 插件安装助手"
+  },
+  "description": {
+    "en": "Agent-facing plugin installation: catalog search, same-name disambiguation, DSH-compatible version selection, registry or GitHub-source install, and post-install verification.",
+    "zh": "面向 agent 的插件安装：目录检索、同名消歧、按当前内核选兼容版本、registry 或 GitHub 源码安装、装后校验。"
+  },
+  "plugins": [
+    {
+      "name": "dsh-plugin-resolver",
+      "title": {
+        "en": "DSH Plugin Resolver",
+        "zh": "DSH 插件安装助手"
+      },
+      "description": {
+        "en": "One tool call installs a DSH plugin correctly: -87% steps and 0 failed retries versus the manual flow.",
+        "zh": "一次工具调用把插件装对：相比手工流程少 87% 的步骤、0 次失败重试。"
+      },
+      "author": "sakikoTGW",
+      "homepage": "https://github.com/sakikoTGW/dsh-plugin-resolver#readme",
+      "repository": {
+        "url": "https://github.com/sakikoTGW/dsh-plugin-resolver"
+      },
+      "metadata": {
+        "sortKeys": {}
+      },
+      "versions": [
+        {
+          "version": "0.1.0",
+          "publishTimestamp": 1792258921,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/sakikoTGW/dsh-plugin-resolver",
+            "commit": "f313726fb2a32cd16470a70cb688b8dedacf068f"
+          },
+          "engines": {
+            "dsh": ">=0.2.0-rc.2 <0.3.0"
+          }
+        }
+      ]
+    }
+  ]
+}
