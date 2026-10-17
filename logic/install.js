@@ -17,6 +17,7 @@ const { registryBase } = await import(__q('resolve.js'))
 
 import { mkdir, readdir, readFile, rename, rm, writeFile } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
+import { createHash } from 'node:crypto'
 import path from 'node:path'
 
 /** Longest a source install may run before the tool reports a timeout. */
@@ -95,21 +96,138 @@ export async function installRegistry(manager, plan) {
  * @returns {Promise<any | undefined>}
  */
 export async function installedManifest(packageName) {
-  const candidates = []
-  if (process.env.DSH_PROFILE_DIR) candidates.push(process.env.DSH_PROFILE_DIR)
-  const home = process.env.DSH_HOME && process.env.DSH_HOME !== '' ? process.env.DSH_HOME : null
-  if (home) {
-    const profile = process.env.DSH_PROFILE && process.env.DSH_PROFILE !== '' ? process.env.DSH_PROFILE : 'web'
-    candidates.push(path.join(home, 'profiles', profile))
+  const packageDir = await installedPackageDir(packageName)
+  if (packageDir === undefined) return undefined
+  try {
+    return JSON.parse(await readFile(path.join(packageDir, 'package.json'), 'utf8'))
+  } catch {
+    return undefined
   }
-  for (const profileDir of candidates) {
-    try {
-      return JSON.parse(await readFile(path.join(profileDir, 'node_modules', packageName, 'package.json'), 'utf8'))
-    } catch {
-      // try the next candidate
-    }
+}
+
+/** Candidate profile directories, most specific first. */
+function profileDirs() {
+  const dirs = []
+  if (process.env.DSH_PROFILE_DIR) dirs.push(process.env.DSH_PROFILE_DIR)
+  const home = process.env.DSH_HOME && process.env.DSH_HOME !== '' ? process.env.DSH_HOME : dshHome()
+  if (home) {
+    const profile = process.env.DSH_PROFILE && process.env.DSH_PROFILE !== '' ? process.env.DSH_PROFILE : 'desktop'
+    for (const name of [profile, 'desktop', 'web']) dirs.push(path.join(home, 'profiles', name))
+  }
+  return [...new Set(dirs)]
+}
+
+/**
+ * Locate an installed package directory without assuming one profile layout.
+ * @param {string} packageName
+ * @returns {Promise<string | undefined>}
+ */
+export async function installedPackageDir(packageName) {
+  for (const profileDir of profileDirs()) {
+    const candidate = path.join(profileDir, 'node_modules', packageName)
+    if (existsSync(path.join(candidate, 'package.json'))) return candidate
   }
   return undefined
+}
+
+function sha256(value) {
+  return createHash('sha256').update(value).digest('hex')
+}
+
+/** Runtime files that decide whether the loaded code actually changed. */
+async function hashRuntimeFiles(dir) {
+  const files = []
+  async function walk(current) {
+    let entries
+    try {
+      entries = await readdir(current, { withFileTypes: true })
+    } catch {
+      return
+    }
+    for (const entry of entries) {
+      if (entry.name === 'node_modules' || entry.name === 'test' || entry.name === 'tests' || entry.name === 'fixtures' || entry.name === 'examples' || entry.name === '.git' || entry.name === '.github') continue
+      if (/^(license|notice|readme)/i.test(entry.name)) continue
+      const abs = path.join(current, entry.name)
+      if (entry.isDirectory()) {
+        await walk(abs)
+        continue
+      }
+      if (!entry.isFile()) continue
+      const ext = path.extname(entry.name).toLowerCase()
+      if (ext === '.md' || ext === '.markdown' || ext === '.map' || ext === '.d.ts' || ext === '.pdb') continue
+      if (entry.name === 'package.json') continue
+      try {
+        files.push(`${path.relative(dir, abs).split(path.sep).join('/')}:${sha256(await readFile(abs))}`)
+      } catch {
+        // unreadable runtime file: treating it as absent is safer than crashing
+      }
+    }
+  }
+  await walk(dir)
+  files.sort()
+  return files
+}
+
+/**
+ * Snapshot the installed package's runtime identity. README/docs and the
+ * version field are excluded: those changes do not alter loaded code.
+ * @param {string} packageName
+ * @returns {Promise<{version: string, hash: string, clientHash: string, hasClient: boolean, dir: string} | null>}
+ */
+export async function capturePackageRuntime(packageName) {
+  const dir = await installedPackageDir(packageName)
+  if (dir === undefined) return null
+  try {
+    const manifest = JSON.parse(await readFile(path.join(dir, 'package.json'), 'utf8'))
+    const files = await hashRuntimeFiles(dir)
+    const meta = {
+      main: manifest.main ?? null,
+      exports: manifest.exports ?? null,
+      dsh: manifest.dsh ?? null,
+      dependencies: manifest.dependencies ?? {},
+      peerDependencies: manifest.peerDependencies ?? {},
+    }
+    const clientFiles = files.filter((line) => /(^|[/\\])[^/\\]*client[^/\\]*\.(?:js|mjs|cjs|ts):/i.test(line))
+    return {
+      version: String(manifest.version ?? ''),
+      hash: sha256(`${JSON.stringify(meta)}\n${files.join('\n')}`),
+      clientHash: sha256(clientFiles.join('\n')),
+      hasClient: Boolean(manifest.dsh?.client),
+      dir,
+    }
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Decide whether install results really require a restart. Bundle additions and
+ * changed runtime/client files do; no-op reinstall and metadata-only version
+ * bumps do not. A manager-applied in-place change needs no restart either.
+ * @param {{before: any, after: any, bundlesBefore: string[], bundlesAfter: string[], managerApplication: string}} input
+ */
+export function decideRestart({ before, after, bundlesBefore, bundlesAfter, managerApplication }) {
+  const beforeNames = new Set(bundlesBefore ?? [])
+  const afterNames = new Set(bundlesAfter ?? [])
+  const added = [...afterNames].filter((name) => !beforeNames.has(name))
+  const removed = [...beforeNames].filter((name) => !afterNames.has(name))
+  if (added.length > 0 || removed.length > 0) {
+    return { required: true, reason: `bundle set changed (${[...added, ...removed].join(', ')})`, bundleChanged: true, codeChanged: true, clientChanged: false, versionChanged: false }
+  }
+  if (!before || !after) {
+    const required = managerApplication === 'restart-required'
+    return { required, reason: required ? 'manager requested a restart (no runtime snapshot)' : 'manager applied it in place', bundleChanged: false, codeChanged: false, clientChanged: false, versionChanged: false }
+  }
+  const versionChanged = before.version !== after.version
+  const codeChanged = before.hash !== after.hash
+  const clientChanged = Boolean(before.hasClient && after.hasClient && before.clientHash !== after.clientHash)
+  if (!codeChanged) {
+    return { required: false, reason: versionChanged ? 'runtime files are unchanged (version label only)' : 'runtime files are unchanged', bundleChanged: false, codeChanged: false, clientChanged: false, versionChanged }
+  }
+  if (managerApplication === 'applied') {
+    return { required: false, reason: 'manager applied the change in place', bundleChanged: false, codeChanged: true, clientChanged, versionChanged }
+  }
+  return { required: true, reason: clientChanged ? 'client half changed' : 'runtime code changed', bundleChanged: false, codeChanged: true, clientChanged, versionChanged }
 }
 
 /**

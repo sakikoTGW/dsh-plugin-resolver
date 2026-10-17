@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Offline checks for the pieces that must be right before anything installs:
  * the semver subset, catalog normalization/search, GitHub spec parsing, and the
  * version-selection rule that keeps a plugin on the DSH-compatible line.
@@ -9,6 +9,7 @@
 import assert from 'node:assert/strict'
 import { normalizeCatalog, searchCatalog } from '../logic/catalog.js'
 import { chooseCompatibleVersion, parseGithubSpec, parseNpmTarget } from '../logic/resolve.js'
+import { decideRestart } from '../logic/install.js'
 import { satisfies, compareVersions } from '../logic/semver.js'
 
 let failures = 0
@@ -127,6 +128,41 @@ check('exact npm name ranks first', () => {
 check('installed marker applies', () => {
   const { matches } = searchCatalog(catalog, 'dsh-better-sidebar', { limit: 5, installed: new Set(['dsh-better-sidebar']) })
   assert.equal(matches[0].installed, true)
+})
+
+// --- restart decision -----------------------------------------------------
+const runtime = (version, hash, extra = {}) => ({ version, hash, clientHash: hash, hasClient: false, ...extra })
+const noBundles = { bundlesBefore: ['dsh-plugin-resolver'], bundlesAfter: ['dsh-plugin-resolver'] }
+
+check('restart: no-op install needs no restart', () => {
+  const decision = decideRestart({ before: runtime('1.0.0', 'a'), after: runtime('1.0.0', 'a'), ...noBundles, managerApplication: 'restart-required' })
+  assert.equal(decision.required, false)
+  assert.match(decision.reason, /unchanged/)
+})
+check('restart: version-only bump needs no restart', () => {
+  const decision = decideRestart({ before: runtime('1.0.0', 'a'), after: runtime('1.0.1', 'a'), ...noBundles, managerApplication: 'restart-required' })
+  assert.equal(decision.required, false)
+  assert.equal(decision.versionChanged, true)
+})
+check('restart: runtime code change needs restart', () => {
+  const decision = decideRestart({ before: runtime('1.0.0', 'a'), after: runtime('1.0.1', 'b'), ...noBundles, managerApplication: 'restart-required' })
+  assert.equal(decision.required, true)
+  assert.equal(decision.codeChanged, true)
+})
+check('restart: added bundle needs restart', () => {
+  const decision = decideRestart({ before: null, after: runtime('1.0.0', 'a'), bundlesBefore: ['dsh-plugin-resolver'], bundlesAfter: ['dsh-plugin-resolver', 'new-bundle'], managerApplication: 'applied' })
+  assert.equal(decision.required, true)
+  assert.equal(decision.bundleChanged, true)
+})
+check('restart: client-half change needs restart', () => {
+  const decision = decideRestart({ before: runtime('1.0.0', 'a', { hasClient: true, clientHash: 'x' }), after: runtime('1.0.1', 'b', { hasClient: true, clientHash: 'y' }), ...noBundles, managerApplication: 'restart-required' })
+  assert.equal(decision.required, true)
+  assert.equal(decision.clientChanged, true)
+})
+check('restart: manager applied in place needs no restart', () => {
+  const decision = decideRestart({ before: runtime('1.0.0', 'a'), after: runtime('1.0.1', 'b'), ...noBundles, managerApplication: 'applied' })
+  assert.equal(decision.required, false)
+  assert.match(decision.reason, /applied/)
 })
 
 if (failures > 0) {

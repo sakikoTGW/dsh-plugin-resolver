@@ -15,13 +15,13 @@
 | 与宿主共享实例的 dsh 包要同时进 `peerDependencies` + `devDependencies` | 保证运行时用宿主那份 | ✅ 本插件不 import 任何宿主包（只用 `ctx.get()` 动态取服务），无需 peer |
 | npm 发布应带**预构建产物** | 用户装到的是发布产物，不是源码 | ✅ 纯 ESM，无构建步骤 |
 | git 安装必须提供 `prepare` 脚本 | git 安装拉的是**源码**，不会跑 build；TS 包会没有 `lib/` 而加载失败 | ✅ 不适用（无构建）；因此用户也**不需要** `allowBuilds` 授权 |
-| 版本标签 | 官方市场生成器按 `vX.Y.Z` / `X.Y.Z` / `<name>@X.Y.Z` 识别版本 | ✅ `v0.1.1` |
+| 版本标签 | 官方市场生成器按 `vX.Y.Z` / `X.Y.Z` / `<name>@X.Y.Z` 识别版本 | ✅ `v0.1.2` |
 | 市场索引的 `engines.dsh` 与包一致 | 索引版本字段应等于包声明；不一致会被安装时再次拒绝 | ✅ 一致 |
 | 安全边界 | `allowBuilds` = 允许该包代码在安装时于本机执行；git 安装应锁 commit；`http:` 索引可被中间人改 | 本插件无 install/prepare 脚本，风险面最小；建议始终锁 commit |
 
 ## 二、发布方式（三选一）
 
-1. **npm（推荐）—— ✅ 已发布 `dsh-plugin-resolver@0.1.1`（2026-10-18，`latest` 已指向 0.1.1）**
+1. **npm（推荐）—— ✅ 已发布 `dsh-plugin-resolver@0.1.2`（2026-10-18，`latest` 已指向 0.1.2）**
    ```sh
    dsh plugin --profile <profile> add dsh-plugin-resolver
    ```
@@ -36,7 +36,7 @@
 3. **Tarball**（不需要任何构建权限）
    ```sh
    npm pack
-   dsh plugin --profile <profile> add ./dsh-plugin-resolver-0.1.1.tgz
+   dsh plugin --profile <profile> add ./dsh-plugin-resolver-0.1.2.tgz
    ```
 
 ## 三、进官方插件市场（可选）
@@ -44,7 +44,7 @@
 DSH **没有中心索引**：市场是一个自托管的 JSON 索引文件，用户在 `插件 → 发现 → 添加索引源` 里填 URL（需先打开实验性的**自定义插件市场**组合包）。本仓库提供了 [`market/index.json`](market/index.json)，并已：
 
 - ✅ 用官方校验器 `@deepseek-ai/dsh-plugin-market-index@0.2.1-alpha.4` 的 `parseMarketIndex` 校验通过
-- ✅ 用官方 `marketInstallTarget` 复核安装 spec：`dsh-plugin-resolver@0.1.1`（npm 源）
+- ✅ 用官方 `marketInstallTarget` 复核安装 spec：`dsh-plugin-resolver@0.1.2`（npm 源）
 - ✅ 通过 GitHub Pages 托管：**https://sakikoTGW.github.io/dsh-plugin-resolver/market/index.json**（页面 200，直出 JSON）
 
 索引规则要点（违反任意一条会**整个索引被拒**，并显示违规值的 JSON 路径）：
@@ -71,8 +71,8 @@ DSH **没有中心索引**：市场是一个自托管的 JSON 索引文件，用
 ## 五、当前待办
 
 - [x] 索引格式 1 通过官方校验器；GitHub Pages 已托管 `market/index.json`
-- [x] `v0.1.1` 标签已打（官方市场生成器按 `vX.Y.Z` 识别版本）
-- [x] npm 发布 `dsh-plugin-resolver@0.1.1`（`latest` = 0.1.1）
+- [x] `v0.1.2` 标签已打（官方市场生成器按 `vX.Y.Z` 识别版本）
+- [x] npm 发布 `dsh-plugin-resolver@0.1.2`（`latest` = 0.1.2）
 - [x] 市场索引已切到 npm 源（官方推荐）
 - [x] dsh.so 提交（格式校验 Pass，`✓ Submitted`）
 - [x] dshbase issue、awesome-dsh-plugin PR 已提交

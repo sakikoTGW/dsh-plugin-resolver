@@ -15,7 +15,7 @@
 const __v = new URL(import.meta.url).searchParams.get('v') ?? ''
 const __q = (name) => `./${name}${__v === '' ? '' : `?v=${encodeURIComponent(__v)}`}`
 const { baseName, loadCatalog, searchCatalog } = await import(__q('catalog.js'))
-const { installGithubSource, installRegistry, verifyInstall } = await import(__q('install.js'))
+const { installGithubSource, installRegistry, verifyInstall, capturePackageRuntime, decideRestart } = await import(__q('install.js'))
 const { resolveTarget } = await import(__q('resolve.js'))
 const { oneLine, stars } = await import(__q('util.js'))
 
@@ -122,6 +122,16 @@ export async function pluginInstall(ctx, manager, options, args) {
     let packageName = plan.name
     let steps = []
     let application = 'unknown'
+    let beforeRuntime = null
+    let bundlesBefore = []
+    if (plan.kind === 'npm' && typeof plan.name === 'string' && plan.name !== '') {
+      beforeRuntime = await capturePackageRuntime(plan.name).catch(() => null)
+    }
+    try {
+      bundlesBefore = (await manager.listBundles()).map((bundle) => bundle.name)
+    } catch {
+      bundlesBefore = []
+    }
 
     if (plan.kind === 'github') {
       const result = await installGithubSource(manager, plan, {
@@ -140,10 +150,11 @@ export async function pluginInstall(ctx, manager, options, args) {
       if (steps.length > 0) lines.push(`steps: ${steps.join(' → ')}`)
     } else {
       const { summary } = await installRegistry(manager, plan)
-      application = summary.application
+      const alreadyInstalled = /already-installed/i.test(summary.error ?? '')
+      application = alreadyInstalled ? 'applied' : summary.application
       if (packageName === null && summary.bundle) packageName = summary.bundle
-      lines.push(`install: ${summary.application} (${summary.stage})`)
-      if (summary.error) lines.push(`error: ${summary.error}`)
+      lines.push(alreadyInstalled ? 'install: already installed (no change)' : `install: ${summary.application} (${summary.stage})`)
+      if (summary.error && !alreadyInstalled) lines.push(`error: ${summary.error}`)
       if (summary.pendingBuilds.length > 0) {
         lines.push(`pending build scripts (needs approval): ${summary.pendingBuilds.join(', ')}`)
       }
@@ -163,14 +174,26 @@ export async function pluginInstall(ctx, manager, options, args) {
         lines.push(`- bundle: ${health.bundle.name}@${health.bundle.version ?? '?'} enabled=${health.bundle.enabled}`)
       }
       lines.push(`- package: ${packageName}${health.hasClient ? ` (client half via ${health.clientSource})` : ' (host-only)'}`)
-      const next = []
-      if (application === 'restart-required') {
-        next.push('restart DSH fully: replacing an already-mounted plugin cannot be hot-swapped safely')
+      let afterRuntime = null
+      let bundlesAfter = []
+      try {
+        afterRuntime = await capturePackageRuntime(packageName)
+        bundlesAfter = (await manager.listBundles()).map((bundle) => bundle.name)
+      } catch {
+        // keep the manager's own restart decision
       }
+      const restart = decideRestart({ before: beforeRuntime, after: afterRuntime, bundlesBefore, bundlesAfter, managerApplication: application })
+      lines.push('', `restart: ${restart.required ? 'required' : 'not required'} — ${restart.reason}`)
+      if (application === 'restart-required' && !restart.required) {
+        lines.push('- note: manager requested a restart, but runtime files are unchanged')
+      }
+      if (!restart.required && restart.versionChanged) lines.push('- version label updates after the next restart')
+      const next = []
+      if (restart.required) next.push(`restart DSH fully: ${restart.reason}`)
       if (health.entry?.fiberPhase === 'failed') next.push('host half failed to load; inspect the harness log for the error')
-      if (health.hasClient && application !== 'restart-required') next.push('client half exists: refresh the GUI (Ctrl+R) to load it')
-      if (health.entry?.fiberPhase === 'active' && !health.hasClient && application !== 'restart-required') {
-        next.push('host-only: no GUI refresh required')
+      if (restart.clientChanged) next.push('client half changed: refresh the GUI (Ctrl+R) to load it')
+      if (health.entry?.fiberPhase === 'active' && !health.hasClient && !restart.required && !restart.codeChanged) {
+        next.push('host-only: no restart or GUI refresh required')
       }
       if (next.length > 0) lines.push('', `next: ${next.join('; ')}`)
     }

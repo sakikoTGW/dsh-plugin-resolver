@@ -56,12 +56,12 @@ flowchart LR
 要求 **DSH `>=0.2.0-rc.2 <0.3.0`**（已在 `engines.dsh` 声明）。纯 JS、无构建、无 install 脚本，三种方式都不需要 `allowBuilds` 授权：
 
 ```sh
-# npm（已发布 0.1.1；profile 名以你的 DSH 安装为准）
+# npm（已发布 0.1.2；profile 名以你的 DSH 安装为准）
 dsh plugin --profile <profile> add dsh-plugin-resolver
 # GitHub 源码安装（建议锁 commit）
 dsh plugin --profile <profile> add github:sakikoTGW/dsh-plugin-resolver#<commit>
 # tarball
-npm pack && dsh plugin --profile <profile> add ./dsh-plugin-resolver-0.1.1.tgz
+npm pack && dsh plugin --profile <profile> add ./dsh-plugin-resolver-0.1.2.tgz
 ```
 
 装完（宿主重启后最稳）直接说：
@@ -115,6 +115,20 @@ install spec: dsh-better-sidebar@0.28.0
 - **GitHub-only**：检出到 `$DSH_HOME/plugin-sources/<owner>__<repo>`，缺构建产物且声明了 `build` 时执行 `pnpm install` + `pnpm run build`，随后 `installBundle('link:<pkgDir>')`，已构建的检出直接复用；
 - **显式 spec**（`github:` / `link:` / `file:` / `https:`）：原样交给插件管理器。
 
+## 重启判定
+
+`plugin_install` 不再无条件要求重启；安装前后会比较：
+
+- `pluginManager.listBundles()` 的 bundle 集合
+- 已安装包运行时文件的 hash（排除 README / docs / 版本号）
+
+结果：
+
+- 无变化 / 仅版本号变化 / 管理器已就地应用 → `restart: not required`
+- bundle 新增、运行时代码变化、client 半变化 → `restart: required — <原因>`
+
+本插件自身的 `logic/` 改动可以按 mtime 热加载，不需要重启；新增 bundle 或宿主壳变化仍然必须重启。
+
 ## 结构：稳定壳 + 可热加载逻辑
 
 ```
@@ -150,7 +164,7 @@ node test/ablation.mjs    # 消融测试（无副作用）
 ## 测试与 CI
 
 ```sh
-npm test        # = selftest(19) + harness(10)
+npm test        # = selftest(25) + harness(10)
 npm run bench   # 基准
 npm run ablate  # 消融
 ```
@@ -163,7 +177,7 @@ npm run ablate  # 消融
 ## 已知限制
 
 - 兼容性以 npm 元数据里的 peer / `engines.dsh` 为准，宿主启动预检另有判断时以宿主为准；
-- **替换已加载插件**仍需要重启宿主（loader 模块缓存 + 打包宿主无 Node 内部 loader），插件会如实报 `restart-required`；
+- **替换已加载插件**仍需要重启宿主（loader 模块缓存 + 打包宿主无 Node 内部 loader）；`plugin_install` 会先比较安装前后的 bundle 集合与运行时文件 hash，只有真正变化时才报 `restart-required`；
 - 同名歧义不猜，需要调用方给 `owner=` 或完整 spec；
 - 目录是社区维护的第三方列表，插件只保证"按声明来源装对版本"，不做安全审计；
 - GitHub 源码构建依赖宿主环境里的 `pnpm`（PATH 或 `DSH_PNPM_PATH`）与 `tar`，大仓库首次构建较慢。
