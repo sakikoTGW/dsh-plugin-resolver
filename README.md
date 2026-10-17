@@ -21,13 +21,13 @@
 
 ## 为什么要它
 
-**场景**：给一台 DSH `0.2.0-rc.2` 装两个真实插件——`dsh-better-sidebar`（npm 上的 latest 要求更高内核）和 `dsh-browser`（6 个同名 owner、GitHub-only、还要本地构建扩展）。当时在 agent 侧，这是这样一串手工活：
+**场景**：给一台 DSH 装两个真实插件——`dsh-better-sidebar`（npm 上的 latest 不保证兼容当前内核）和 `dsh-browser`（6 个同名 owner、GitHub-only、还要本地构建扩展）。当时在 agent 侧，这是这样一串手工活：
 
 | 实际会发生的事 | 代价（真机实测） |
 |---|---|
 | 目录在 GitHub Pages 上，拉一次 6.4 MB | **91 s**，模型还得读一堆条目 |
 | 同一个名字有多个 owner（`dsh-browser` 有 6 个） | 靠猜，猜错就装错来源 |
-| `latest` 未必兼容当前内核（如 `0.28.0` 要 `^0.2.1-rc.1`，宿主是 `0.2.0-rc.2`） | 装上后启动预检把它静默禁用 |
+| `latest` 未必兼容当前内核（peer 线或 `engines.dsh` 可能高于宿主） | 装上后启动预检把它静默禁用 |
 | 直连 npmjs 慢 | 两次 **90 s 超时**，换镜像后 13.4 s |
 | GitHub-only 仓库不提交构建产物 | `dsh plugin add github:…` 装了个 `main` 指向不存在文件的包 |
 | 装完不知道有没有生效 | 需要另找手段回读 loader entry / 前端 boot 表 |
@@ -56,12 +56,12 @@ flowchart LR
 要求 **DSH `>=0.2.0-rc.2 <0.3.0`**（已在 `engines.dsh` 声明）。纯 JS、无构建、无 install 脚本，三种方式都不需要 `allowBuilds` 授权：
 
 ```sh
-# npm（官方推荐，已发布 0.1.0）
-dsh plugin --profile web add dsh-plugin-resolver
+# npm（已发布 0.1.0；profile 名以你的 DSH 安装为准）
+dsh plugin --profile <profile> add dsh-plugin-resolver
 # GitHub 源码安装（建议锁 commit）
-dsh plugin --profile web add github:sakikoTGW/dsh-plugin-resolver#<commit>
+dsh plugin --profile <profile> add github:sakikoTGW/dsh-plugin-resolver#<commit>
 # tarball
-npm pack && dsh plugin --profile web add ./dsh-plugin-resolver-0.1.0.tgz
+npm pack && dsh plugin --profile <profile> add ./dsh-plugin-resolver-0.1.0.tgz
 ```
 
 装完（宿主重启后最稳）直接说：
@@ -69,7 +69,7 @@ npm pack && dsh plugin --profile web add ./dsh-plugin-resolver-0.1.0.tgz
 > "帮我装 dsh-browser" → 它会先问/列出 6 个同名候选；
 > "装 dsh-builtin-browser" → 自动选到与你内核兼容的版本并装好。
 
-官方插件市场索引（需先打开实验性「自定义插件市场」，然后 `插件 → 发现 → 添加索引源`）：
+插件市场（Discover）索引（在插件页打开实验性「自定义插件市场」，然后 `插件 → 发现 → 添加索引源`）：
 
 ```text
 https://sakikoTGW.github.io/dsh-plugin-resolver/market/index.json
@@ -79,19 +79,18 @@ https://sakikoTGW.github.io/dsh-plugin-resolver/market/index.json
 
 ```text
 $ plugin_resolve dsh-builtin-browser
-target kind: npm   running DSH: 0.2.0-rc.2
+target kind: npm   running DSH: 0.2.1-rc.2
 package: dsh-builtin-browser@0.4.13
 install spec: dsh-builtin-browser@0.4.13
 registry: https://registry.npmmirror.com/
 notes:
-- newest of 39 published versions whose DSH peer range accepts 0.2.0-rc.2
+- newest published version whose DSH peer range accepts the running host
 ```
 
 ```text
 $ plugin_resolve dsh-better-sidebar
-package: dsh-better-sidebar@0.26.1
-skipped versions:
-- 0.28.0: @deepseek-ai/dsh-agent needs ^0.2.1-rc.1, host is 0.2.0-rc.2
+package: dsh-better-sidebar@0.28.0
+install spec: dsh-better-sidebar@0.28.0
 ```
 
 ## 四个工具
@@ -129,7 +128,7 @@ logic/             目录 / 版本 / 兼容 / 安装编排（每次调用按 mti
 - **改 `logic/` 任何文件 → 下一次工具调用立即生效，不用重启宿主**
 - 只有改动工具定义层（`index.js` / `host/register.js`）才需要重启
 
-这是为打包桌面版设计的：它拿不到真 HMR 所需的 Node 内部模块加载器，但"重新 import 一个带新 query 的模块"完全可行。
+这是为无 HMR 的打包运行环境设计的：宿主拿不到真 HMR 所需的 Node 内部模块加载器，但"重新 import 一个带新 query 的模块"完全可行。
 
 ## 效果
 
@@ -164,10 +163,10 @@ npm run ablate  # 消融
 ## 已知限制
 
 - 兼容性以 npm 元数据里的 peer / `engines.dsh` 为准，宿主启动预检另有判断时以宿主为准；
-- **替换已加载插件**仍需要重启宿主（loader 模块缓存 + 打包 Electron 无 Node 内部 loader），插件会如实报 `restart-required`；
+- **替换已加载插件**仍需要重启宿主（loader 模块缓存 + 打包宿主无 Node 内部 loader），插件会如实报 `restart-required`；
 - 同名歧义不猜，需要调用方给 `owner=` 或完整 spec；
 - 目录是社区维护的第三方列表，插件只保证"按声明来源装对版本"，不做安全审计；
-- GitHub 源码构建依赖本机 `pnpm`（优先 `$DSH_HOME/.desktop-bin/pnpm*`）与 `tar`，大仓库首次构建较慢。
+- GitHub 源码构建依赖宿主环境里的 `pnpm`（PATH 或 `DSH_PNPM_PATH`）与 `tar`，大仓库首次构建较慢。
 
 ## License
 

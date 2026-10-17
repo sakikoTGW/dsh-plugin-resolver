@@ -23,20 +23,20 @@
 
 1. **npm（官方推荐）—— ✅ 已发布 `dsh-plugin-resolver@0.1.0`（2026-10-18 01:51 +08，`latest` 已指向 0.1.0）**
    ```sh
-   dsh plugin --profile web add dsh-plugin-resolver
+   dsh plugin --profile <profile> add dsh-plugin-resolver
    ```
    注意：npm 已 GA **staged publishing**（npm CLI ≥ 11.15 才有 `npm stage`）。首次发布时 registry 先出现 `0.0.0-stage` 占位版本，0.1.0 处理完成后自动变成 `latest`；后续发版建议升级 npm 并用 `npm stage publish` + `npm stage approve`（approve 需要人工 2FA）。
 
 2. **GitHub 源码安装**（本仓库无构建步骤，所以不需要 `prepare`，也不需要用户授权构建）
    ```sh
-   dsh plugin --profile web add github:sakikoTGW/dsh-plugin-resolver#<40位commit>
+   dsh plugin --profile <profile> add github:sakikoTGW/dsh-plugin-resolver#<40位commit>
    ```
    建议锁 commit（官方安全建议：避免后续 push 悄悄改变实际运行内容）。
 
 3. **Tarball**（不需要任何构建权限）
    ```sh
    npm pack
-   dsh plugin --profile web add ./dsh-plugin-resolver-0.1.0.tgz
+   dsh plugin --profile <profile> add ./dsh-plugin-resolver-0.1.0.tgz
    ```
 
 ## 三、进官方插件市场（可选）

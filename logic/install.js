@@ -1,4 +1,4 @@
-﻿// Reloadable module: local dependencies carry this module's `?v=` query.
+// Reloadable module: local dependencies carry this module's `?v=` query.
 const __v = new URL(import.meta.url).searchParams.get('v') ?? ''
 const __q = (name) => `./${name}${__v === '' ? '' : `?v=${encodeURIComponent(__v)}`}`
 const { dshHome, dirExists, runProcess } = await import(__q('util.js'))
@@ -162,14 +162,8 @@ export async function verifyInstall(ctx, manager, packageName) {
 
 /** Locate a pnpm executable usable for a source build. */
 export function resolvePnpm() {
-  const home = dshHome()
-  const candidates =
-    process.platform === 'win32'
-      ? [path.join(home, '.desktop-bin', 'pnpm.cmd'), path.join(home, '..', '..', '.desktop-bin', 'pnpm.cmd')]
-      : [path.join(home, '.desktop-bin', 'pnpm')]
-  for (const candidate of candidates) {
-    if (existsSync(candidate)) return candidate
-  }
+  const explicit = process.env.DSH_PNPM_PATH
+  if (typeof explicit === 'string' && explicit !== '' && existsSync(explicit)) return explicit
   return process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm'
 }
 
