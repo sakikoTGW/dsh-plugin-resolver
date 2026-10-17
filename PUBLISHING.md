@@ -21,13 +21,11 @@
 
 ## 二、发布方式（三选一）
 
-1. **npm（官方推荐）**
+1. **npm（官方推荐）—— ✅ 已发布 `dsh-plugin-resolver@0.1.0`（2026-10-18 01:51 +08，`latest` 已指向 0.1.0）**
    ```sh
-   npm login          # 本机当前 npm token 已失效（E401），需要重新登录
-   npm publish
+   dsh plugin --profile web add dsh-plugin-resolver
    ```
-   用户：`dsh plugin --profile web add dsh-plugin-resolver`
-   `dsh-plugin-resolver` 这个名字在 npm 上当前**未被占用**。
+   注意：npm 已 GA **staged publishing**（npm CLI ≥ 11.15 才有 `npm stage`）。首次发布时 registry 先出现 `0.0.0-stage` 占位版本，0.1.0 处理完成后自动变成 `latest`；后续发版建议升级 npm 并用 `npm stage publish` + `npm stage approve`（approve 需要人工 2FA）。
 
 2. **GitHub 源码安装**（本仓库无构建步骤，所以不需要 `prepare`，也不需要用户授权构建）
    ```sh
@@ -46,7 +44,7 @@
 DSH **没有中心索引**：市场是一个自托管的 JSON 索引文件，用户在 `插件 → 发现 → 添加索引源` 里填 URL（需先打开实验性的**自定义插件市场**组合包）。本仓库提供了 [`market/index.json`](market/index.json)，并已：
 
 - ✅ 用官方校验器 `@deepseek-ai/dsh-plugin-market-index@0.2.1-alpha.4` 的 `parseMarketIndex` 校验通过
-- ✅ 用官方 `marketInstallTarget` 复核安装 spec：`git+https://github.com/sakikoTGW/dsh-plugin-resolver.git#3fc82fb63573f5b1c34e3b4f6fce3c7d30616397`
+- ✅ 用官方 `marketInstallTarget` 复核安装 spec：`dsh-plugin-resolver@0.1.0`（npm 源）
 - ✅ 通过 GitHub Pages 托管：**https://sakikoTGW.github.io/dsh-plugin-resolver/market/index.json**（页面 200，直出 JSON）
 
 索引规则要点（违反任意一条会**整个索引被拒**，并显示违规值的 JSON 路径）：
@@ -64,5 +62,6 @@ DSH **没有中心索引**：市场是一个自托管的 JSON 索引文件，用
 
 - [x] 索引格式 1 通过官方校验器；GitHub Pages 已托管 `market/index.json`
 - [x] `v0.1.0` 标签已打（官方市场生成器按 `vX.Y.Z` 识别版本）
-- [ ] `npm login` 后 `npm publish`（需要账号授权，agent 侧不做凭据操作）
+- [x] npm 发布 `dsh-plugin-resolver@0.1.0`（`latest` = 0.1.0）
+- [x] 市场索引已切到 npm 源（官方推荐）
 - [ ] （可选）在 awesome-dsh-plugin / dshbase 提交收录（按 GitHub topic `dsh-plugin` 抓取）

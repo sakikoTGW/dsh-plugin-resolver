@@ -5,6 +5,7 @@
 
 [![test](https://github.com/sakikoTGW/dsh-plugin-resolver/actions/workflows/test.yml/badge.svg)](https://github.com/sakikoTGW/dsh-plugin-resolver/actions/workflows/test.yml)
 [![ablation](https://github.com/sakikoTGW/dsh-plugin-resolver/actions/workflows/ablation.yml/badge.svg)](https://github.com/sakikoTGW/dsh-plugin-resolver/actions/workflows/ablation.yml)
+[![npm](https://img.shields.io/npm/v/dsh-plugin-resolver?logo=npm)](https://www.npmjs.com/package/dsh-plugin-resolver)
 [![license](https://img.shields.io/github/license/sakikoTGW/dsh-plugin-resolver)](LICENSE)
 [![node](https://img.shields.io/badge/node-%3E%3D20-339933?logo=node.js&logoColor=white)](package.json)
 [![DSH](https://img.shields.io/badge/DSH-0.2.0--rc.2%2B-4d6bfe)](https://github.com/deepseek-ai/deepseek-harness)
@@ -55,7 +56,7 @@ flowchart LR
 要求 **DSH `>=0.2.0-rc.2 <0.3.0`**（已在 `engines.dsh` 声明）。纯 JS、无构建、无 install 脚本，三种方式都不需要 `allowBuilds` 授权：
 
 ```sh
-# npm（官方推荐，发布后）
+# npm（官方推荐，已发布 0.1.0）
 dsh plugin --profile web add dsh-plugin-resolver
 # GitHub 源码安装（建议锁 commit）
 dsh plugin --profile web add github:sakikoTGW/dsh-plugin-resolver#<commit>

@@ -30,11 +30,9 @@
       "versions": [
         {
           "version": "0.1.0",
-          "publishTimestamp": 1792258921,
+          "publishTimestamp": 1792259460,
           "source": {
-            "type": "git",
-            "url": "https://github.com/sakikoTGW/dsh-plugin-resolver",
-            "commit": "3fc82fb63573f5b1c34e3b4f6fce3c7d30616397"
+            "type": "npm"
           },
           "engines": {
             "dsh": ">=0.2.0-rc.2 <0.3.0"
