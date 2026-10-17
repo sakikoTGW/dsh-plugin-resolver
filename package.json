@@ -1,7 +1,7 @@
 {
   "name": "dsh-plugin-resolver",
   "version": "0.1.0",
-  "description": "Resolve, version-pin and install DSH plugins: catalog search, DSH-compatible version selection, GitHub-source builds, and post-install health verification.",
+  "description": "Agent-facing DSH plugin resolver: search the catalog, pick a version the running DSH accepts, install (registry or GitHub-source build), and verify - no trial and error.",
   "type": "module",
   "main": "index.js",
   "exports": {
@@ -13,6 +13,7 @@
     "host",
     "logic",
     "cordis.patch.yml",
+    "README.md",
     "BENCHMARK.md",
     "ABLATION.md"
   ],
@@ -21,7 +22,33 @@
     "bench": "node test/benchmark.mjs",
     "ablate": "node test/ablation.mjs"
   },
+  "engines": {
+    "node": ">=20",
+    "dsh": ">=0.2.0-rc.2 <0.3.0"
+  },
+  "keywords": [
+    "deepseek",
+    "harness",
+    "dsh",
+    "dsh-plugin",
+    "plugin-manager",
+    "plugin-installer",
+    "resolver",
+    "catalog"
+  ],
+  "author": "sakikoTGW",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sakikoTGW/dsh-plugin-resolver.git"
+  },
+  "homepage": "https://github.com/sakikoTGW/dsh-plugin-resolver#readme",
+  "bugs": {
+    "url": "https://github.com/sakikoTGW/dsh-plugin-resolver/issues"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"

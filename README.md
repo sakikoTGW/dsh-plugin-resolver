@@ -52,11 +52,15 @@ flowchart LR
 
 ## 30 秒上手
 
+要求 **DSH `>=0.2.0-rc.2 <0.3.0`**（已在 `engines.dsh` 声明）。纯 JS、无构建、无 install 脚本，三种方式都不需要 `allowBuilds` 授权：
+
 ```sh
-# 从 GitHub 安装（纯 JS，无需构建）
-dsh plugin --profile web add github:sakikoTGW/dsh-plugin-resolver
-# 发布到 npm 后
+# npm（官方推荐，发布后）
 dsh plugin --profile web add dsh-plugin-resolver
+# GitHub 源码安装（建议锁 commit）
+dsh plugin --profile web add github:sakikoTGW/dsh-plugin-resolver#<commit>
+# tarball
+npm pack && dsh plugin --profile web add ./dsh-plugin-resolver-0.1.0.tgz
 ```
 
 装完（宿主重启后最稳）直接说：
