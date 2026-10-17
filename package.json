@@ -12,11 +12,14 @@
     "index.js",
     "host",
     "logic",
-    "cordis.patch.yml"
+    "cordis.patch.yml",
+    "BENCHMARK.md",
+    "ABLATION.md"
   ],
   "scripts": {
     "test": "node test/selftest.mjs && node test/harness.mjs",
-    "bench": "node test/benchmark.mjs"
+    "bench": "node test/benchmark.mjs",
+    "ablate": "node test/ablation.mjs"
   },
   "license": "MIT",
   "dsh": {

@@ -1,106 +1,171 @@
 # dsh-plugin-resolver
 
-DSH 插件安装助手（host-only 插件，给模型加 4 个工具）。把"帮我装个插件"从翻目录、试版本、装坏了再修的循环，收敛成一次确定的解析 + 安装 + 校验。
+**让 agent 自己把 DSH 插件装明白。**
+搜索 → 同名消歧 → 按当前内核选兼容版本 → 安装（registry 或 GitHub 源码构建）→ 装后校验，一次调用走完。
 
-## 它解决的具体问题
+[![test](https://github.com/sakikoTGW/dsh-plugin-resolver/actions/workflows/test.yml/badge.svg)](https://github.com/sakikoTGW/dsh-plugin-resolver/actions/workflows/test.yml)
+[![ablation](https://github.com/sakikoTGW/dsh-plugin-resolver/actions/workflows/ablation.yml/badge.svg)](https://github.com/sakikoTGW/dsh-plugin-resolver/actions/workflows/ablation.yml)
+[![license](https://img.shields.io/github/license/sakikoTGW/dsh-plugin-resolver)](LICENSE)
+[![node](https://img.shields.io/badge/node-%3E%3D20-339933?logo=node.js&logoColor=white)](package.json)
+[![DSH](https://img.shields.io/badge/DSH-0.2.0--rc.2%2B-4d6bfe)](https://github.com/deepseek-ai/deepseek-harness)
+[![tests](https://img.shields.io/badge/tests-29%20checks%20passing-brightgreen)](test)
+[![stars](https://img.shields.io/github/stars/sakikoTGW/dsh-plugin-resolver?style=social)](https://github.com/sakikoTGW/dsh-plugin-resolver/stargazers)
 
-| 反复踩的坑 | 这个插件怎么处理 |
-| --- | --- |
-| 市场里有 6 个同名 `dsh-browser` | `plugin_search` / `plugin_resolve` 保留全部同名候选并标 owner，不猜 |
-| npm `latest` 与宿主内核不兼容（如 `0.28.0` 要 `^0.2.1-rc.1`，宿主只有 `0.2.0-rc.2`） | 读宿主 `@deepseek-ai/dsh-base` 版本，按插件 `@deepseek-ai/dsh*` peer 与 `engines.dsh` 选**最高兼容版本** |
-| caret 跨 minor 的 prerelease 陷阱 | 内置 semver 子集按宿主的 `includePrerelease` 语义求值（`^0.1.7-rc.1` 不会接受 `0.2.0-rc.2`） |
-| 直连 npmjs 几十 KB/s，装到 90s 超时 | 优先用 Host 的 `pluginRegistryProbe.fastest()` / 配置的镜像，并显式传给安装器 |
-| GitHub-only 插件仓库不提交 `lib/`，装上也是空的 | 自动检出源码（支持 GitHub 代理）→ `pnpm install` → `pnpm run build` → 再以 `link:` 注册 |
-| 装完不知道有没有生效 | 安装后回读 loader entry / bundle / manifest，报 `fiberPhase` 与是否需要刷新或重启 |
+> host-only 插件：给 DSH 加 4 个模型工具，不注册服务、没有前端、纯 ESM 免构建。
 
-## 结构：稳定壳 + 可热加载逻辑
+---
 
+## 为什么要它
+
+DSH 生态已有 5,000+ 插件，但"帮我装一个插件"在 agent 侧本来是一串手工活：
+
+| 实际会发生的事 | 代价（本仓库真机实测） |
+|---|---|
+| 目录在 GitHub Pages 上，拉一次 6.4 MB | **91 s**，模型还得读一堆条目 |
+| 同一个名字有多个 owner（`dsh-browser` 有 6 个） | 靠猜，猜错就装错来源 |
+| `latest` 未必兼容当前内核（如 `0.28.0` 要 `^0.2.1-rc.1`，宿主是 `0.2.0-rc.2`） | 装上后启动预检把它静默禁用 |
+| 直连 npmjs 慢 | 两次 **90 s 超时**，换镜像后 13.4 s |
+| GitHub-only 仓库不提交构建产物 | `dsh plugin add github:…` 装了个 `main` 指向不存在文件的包 |
+| 装完不知道有没有生效 | 需要另找手段回读 loader entry / 前端 boot 表 |
+
+这个插件的存在意义：把上面这些**判断与验证**固化一次，之后每次只需一次工具调用。
+
+## 怎么工作
+
+```mermaid
+flowchart LR
+    Q["“装 xxx 插件”"] --> S["plugin_search<br/>目录检索 / 同名消歧"]
+    S --> R["plugin_resolve<br/>读取宿主版本<br/>peer + engines 求解"]
+    R --> C{有兼容版本?}
+    C -- 否 --> X["列出拒绝原因<br/>（需要 DSH 几）"]
+    C -- 是 --> V["选最高兼容版本"]
+    V --> K{npm 发布?}
+    K -- 是 --> I["installBundle<br/>最快 registry"]
+    K -- 否 --> B["检出源码<br/>pnpm install + build<br/>link: 注册"]
+    I --> H["回读 loader entry<br/>bundle / client 半"]
+    B --> H
+    H --> O["如实告知：刷新 / 重启 / 已生效"]
 ```
-index.js           宿主入口（挂载工具，稳定）
-host/register.js   工具 schema + pluginManager 桥接（稳定，改动需重启）
-logic/             目录/版本/兼容/安装编排（每次调用按 mtime 重新 import）
-```
 
-`host/register.js` 每次工具调用都会算一遍 `logic/` 下所有文件的 mtime，并以
-`import('./logic/api.js?v=<mtime>')` 的形式导入逻辑入口；逻辑模块之间也用同一个
-`?v=` 传递依赖。Node 的 ESM 缓存按完整 URL 计，所以：
-
-- **改 `logic/` 里的任何文件 → 下一次工具调用立即生效，不用重启宿主**
-- 只有改 `index.js` / `host/register.js`（工具定义、返回结构）才需要重启
-
-这是为打包桌面版设计的：它拿不到真 HMR 所需的 Node 内部模块加载器，但对
-"重新 import 一个带新 query 的模块"完全没问题。
-
-## 工具
-
-| 工具 | 作用 |
-| --- | --- |
-| `plugin_search` | 搜社区目录（npm 承载的目录包优先，避免慢速 GitHub Pages），排序并标同名歧义 |
-| `plugin_resolve` | 只解析不安装：目录条目、兼容版本、registry、是否需要源码构建 |
-| `plugin_install` | 完整安装：选版本 → 安装/构建 → 校验 → 给出下一步动作 |
-| `plugin_status` | 列出本 profile 的第三方 bundle 与 loader entry 状态 |
-
-## 安装
+## 30 秒上手
 
 ```sh
 # 从 GitHub 安装（纯 JS，无需构建）
 dsh plugin --profile web add github:sakikoTGW/dsh-plugin-resolver
-
-# 发布到 registry 后
+# 发布到 npm 后
 dsh plugin --profile web add dsh-plugin-resolver
-
-# 本地开发
-dsh plugin --profile web add link:/abs/path/to/dsh-plugin-resolver
 ```
 
-host-only，没有 client 半，装完**不需要**刷新浏览器即可让工具生效（宿主重启后最稳）。
+装完（宿主重启后最稳）直接说：
+
+> "帮我装 dsh-browser" → 它会先问/列出 6 个同名候选；
+> "装 dsh-builtin-browser" → 自动选到与你内核兼容的版本并装好。
+
+真实调用长这样：
+
+```text
+$ plugin_resolve dsh-builtin-browser
+target kind: npm   running DSH: 0.2.0-rc.2
+package: dsh-builtin-browser@0.4.13
+install spec: dsh-builtin-browser@0.4.13
+registry: https://registry.npmmirror.com/
+notes:
+- newest of 39 published versions whose DSH peer range accepts 0.2.0-rc.2
+```
+
+```text
+$ plugin_resolve dsh-better-sidebar
+package: dsh-better-sidebar@0.26.1
+skipped versions:
+- 0.28.0: @deepseek-ai/dsh-agent needs ^0.2.1-rc.1, host is 0.2.0-rc.2
+```
+
+## 四个工具
+
+| 工具 | 作用 | 是否改动环境 |
+|---|---|---|
+| `plugin_search` | 搜社区目录（npm 载体优先），排序并显式标出同名歧义 | 只读 |
+| `plugin_resolve` | 只解析不装：目录条目、兼容版本、registry、是否需要源码构建 | 只读 |
+| `plugin_install` | 完整安装：选版本 → 安装/构建 → 回读校验 → 下一步提示 | 写 profile |
+| `plugin_status` | 已装 bundle / loader entry / fiberPhase 盘点 | 只读 |
 
 ## 版本选择规则
 
-1. 运行时版本 = `pluginManager.listBundles()` 里 `@deepseek-ai/dsh-base`（退化到 `dsh-web-app` / `dsh`）的版本。
-2. 逐版本从高到低检查：
-   - 非可选的 `@deepseek-ai/dsh*` peer 范围必须满足运行时版本；
-   - 若声明了 `engines.dsh`，也要满足；
-   - `@deepseek-ai/cordis`、`@deepseek-ai/schemastery` 等**同命名空间但不同版本线**的库不算运行时约束。
-3. 取第一个通过的版本；全部不通过时报出最近几个版本的拒绝原因（"需要 0.2.1-rc.1，宿主是 0.2.0-rc.2"）。
-4. 用户显式给 `version` 时跳过兼容计算，直接安装。
+1. 运行时版本 = `pluginManager.listBundles()` 里 `@deepseek-ai/dsh-base` 的版本；
+2. 逐版本从高到低检查：非可选 **`@deepseek-ai/dsh*`** peer 必须满足运行时版本；声明了 **`engines.dsh`** 也要满足；
+3. `@deepseek-ai/cordis`、`@deepseek-ai/schemastery` 等**同命名空间但不同版本线**的库**不算**运行时约束（这条曾把 4/8 个包误判成"无兼容版本"，见 [ABLATION](ABLATION.md)）；
+4. 取第一个通过者；全不通过时列出最近版本的拒绝原因；用户显式给 `version` 时跳过求解。
 
 ## 安装路径
 
-- **registry 包**：`pluginManager.installBundle(name@resolvedVersion, { registry })`，profile 文件、lockfile、激活生命周期全部交给插件管理器。
-- **GitHub-only**：仓库检出到 `$DSH_HOME/plugin-sources/<owner>__<repo>`；若包声明的 `main` 不存在且声明了 `build` 脚本，则 `pnpm install` + `pnpm run build`，随后 `installBundle('link:<pkgDir>')`。已经构建过的检出会直接复用。
-- **显式 spec**（`github:` / `link:` / `file:` / `http(s)`）：原样交给插件管理器。
+- **registry 包**：`pluginManager.installBundle(name@resolved, { registry })`，profile/lockfile/激活生命周期都交给插件管理器；
+- **GitHub-only**：检出到 `$DSH_HOME/plugin-sources/<owner>__<repo>`，缺构建产物且声明了 `build` 时执行 `pnpm install` + `pnpm run build`，随后 `installBundle('link:<pkgDir>')`，已构建的检出直接复用；
+- **显式 spec**（`github:` / `link:` / `file:` / `https:`）：原样交给插件管理器。
 
-## 目录缓存
+## 结构：稳定壳 + 可热加载逻辑
 
-- 位置：`$DSH_HOME/cache/plugin-resolver/catalog.json`
-- 默认 TTL 12 小时，`refresh: true` 强制刷新
-- 来源优先级：npm 包 `dsh-plugin-catalog`（`dist.tarball` 跟着镜像走）→ 配置的 `catalogUrl` → `awesome-dsh-plugin.com/plugins.json`
-
-## 配置（可选）
-
-挂载行上可写：
-
-```yaml
-- id: plugin-resolver
-  name: 'dsh-plugin-resolver'
-  config:
-    registry: 'https://registry.npmmirror.com'   # 安装/元数据默认 registry
-    catalogUrl: 'https://awesome-dsh-plugin.com/plugins.json'
-    catalogTtlMs: 43200000
-    githubProxy: 'https://gh-proxy.com'           # 直连 codeload 失败时的前缀代理
+```
+index.js           宿主入口（稳定）
+host/register.js   工具 schema + pluginManager 桥接（稳定，改动需重启）
+logic/             目录 / 版本 / 兼容 / 安装编排（每次调用按 mtime 重新 import）
 ```
 
-## 测试
+`host/register.js` 每次调用计算 `logic/` 下最大 mtime，以 `import('./logic/api.js?v=<mtime>')` 导入；逻辑模块之间用同一 `?v=` 传递依赖。Node 的 ESM 缓存按完整 URL 计，因此：
+
+- **改 `logic/` 任何文件 → 下一次工具调用立即生效，不用重启宿主**
+- 只有改动工具定义层（`index.js` / `host/register.js`）才需要重启
+
+这是为打包桌面版设计的：它拿不到真 HMR 所需的 Node 内部模块加载器，但"重新 import 一个带新 query 的模块"完全可行。
+
+## 效果
+
+| 指标 | 手工路径 | 本插件 | 来源 |
+|---|---|---|---|
+| 工具调用（装 1 歧义 + 1 GitHub-only 插件） | ≈ 45 次 | **≈ 6 次** | [BENCHMARK](BENCHMARK.md) |
+| 决策链耗时 | — | **1.23 s / 9 个决策任务** | benchmark.mjs |
+| 目录获取 | 91.06 s / 6.4 MB | **0.94 s / 2 请求** | benchmark.mjs |
+| 安装失败重试 | 2 次 90 s 超时 | **0 次** | 会话日志 |
+| 安装后校验调用 | 2 次额外探测 | **0 次** | benchmark.mjs |
+
+消融测试（逐项拆能力）见 [ABLATION.md](ABLATION.md)：同名 287 组、naive 会选错 51 组；8 个真实包中 2 个 latest 不兼容；镜像元数据延迟比 60.3×；GitHub-only 入口探针 404；静默失败可检测；逻辑热加载 3 ms vs 重启 30–40 s。
 
 ```sh
-node test/selftest.mjs   # semver 子集 / 版本选择 / spec 解析 / 目录检索（离线）
-node test/harness.mjs    # 用假 Cordis ctx + 假 pluginManager 驱动真实工具体（含一次联网解析）
+node test/benchmark.mjs   # 插件路径基准
+node test/ablation.mjs    # 消融测试（无副作用）
 ```
+
+## 测试与 CI
+
+```sh
+npm test        # = selftest(19) + harness(10)
+npm run bench   # 基准
+npm run ablate  # 消融
+```
+
+- `test/selftest.mjs`：semver 子集、版本选择、spec 解析、目录检索（离线）
+- `test/harness.mjs`：假 Cordis ctx + 假 pluginManager 驱动真实工具体
+- `test/benchmark.mjs` / `test/ablation.mjs`：真实目录 + 真实 registry 的测量脚本
+- CI：每次 push 跑 `test`；`ablation` 走手动/每周定时任务
+
+## 与同类插件的关系
+
+| 插件 | 定位 | 与本插件互补之处 |
+|---|---|---|
+| [dshmarket](https://github.com/dsh-market/dsh-market) | GUI 市场：浏览/一键装/更新/回滚/hot mount | 适合人类操作；agent 无法调用 |
+| [dsh-find-plugin](https://github.com/awesome-dsh-plugin/dsh-find-plugin) | agent 侧发现，返回现成安装命令 | 停在"给命令"，不选版本、不安装、不校验 |
+| [dsh-web/plugin-manager](https://github.com/zhu1090093659/dsh-web/tree/main/packages/dsh-plugin-manager) | 官方 Plugins 页的更新与兼容门（要求 DSH ≥ 0.2.1-rc.2） | 聚焦已装插件更新 |
+| [dsh-plugin-gating-hub](https://github.com/Noob-stupid/dsh-plugin-gating-hub) | 升级门禁 / 回滚 / 自动禁用 | 保住升级过程，不做发现与选择 |
+
+本插件是唯一把"发现 + 版本求解 + 安装（含源码构建）+ 装后校验"串成**一次 agent 调用**的。
 
 ## 已知限制
 
-- 兼容性判断依据 npm 元数据里的 peer/engines；宿主启动预检若还看别的字段，仍以宿主为准。
-- GitHub 源码构建依赖本机 `pnpm`（优先 `$DSH_HOME/.desktop-bin/pnpm*`）与 `tar`；大仓库首次构建较慢。
-- 目录是社区维护的第三方列表，条目质量不齐；`plugin_install` 只保证"按声明的来源装对版本"，不做安全审计。
-- 没有客户端 UI：同名消歧通过 `owner` 参数或完整 spec 表达。
+- 兼容性以 npm 元数据里的 peer / `engines.dsh` 为准，宿主启动预检另有判断时以宿主为准；
+- **替换已加载插件**仍需要重启宿主（loader 模块缓存 + 打包 Electron 无 Node 内部 loader），插件会如实报 `restart-required`；
+- 同名歧义不猜，需要调用方给 `owner=` 或完整 spec；
+- 目录是社区维护的第三方列表，插件只保证"按声明来源装对版本"，不做安全审计；
+- GitHub 源码构建依赖本机 `pnpm`（优先 `$DSH_HOME/.desktop-bin/pnpm*`）与 `tar`，大仓库首次构建较慢。
+
+## License
+
+[MIT](LICENSE)
