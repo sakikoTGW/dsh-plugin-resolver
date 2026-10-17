@@ -56,12 +56,12 @@ flowchart LR
 要求 **DSH `>=0.2.0-rc.2 <0.3.0`**（已在 `engines.dsh` 声明）。纯 JS、无构建、无 install 脚本，三种方式都不需要 `allowBuilds` 授权：
 
 ```sh
-# npm（已发布 0.1.0；profile 名以你的 DSH 安装为准）
+# npm（已发布 0.1.1；profile 名以你的 DSH 安装为准）
 dsh plugin --profile <profile> add dsh-plugin-resolver
 # GitHub 源码安装（建议锁 commit）
 dsh plugin --profile <profile> add github:sakikoTGW/dsh-plugin-resolver#<commit>
 # tarball
-npm pack && dsh plugin --profile <profile> add ./dsh-plugin-resolver-0.1.0.tgz
+npm pack && dsh plugin --profile <profile> add ./dsh-plugin-resolver-0.1.1.tgz
 ```
 
 装完（宿主重启后最稳）直接说：
