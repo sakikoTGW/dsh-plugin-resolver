@@ -9,7 +9,7 @@
 import assert from 'node:assert/strict'
 import { normalizeCatalog, searchCatalog } from '../logic/catalog.js'
 import { chooseCompatibleVersion, parseGithubSpec, parseNpmTarget } from '../logic/resolve.js'
-import { decideRestart } from '../logic/install.js'
+import { decideRestart, tail } from '../logic/install.js'
 import { satisfies, compareVersions } from '../logic/semver.js'
 
 let failures = 0
@@ -128,6 +128,22 @@ check('exact npm name ranks first', () => {
 check('installed marker applies', () => {
   const { matches } = searchCatalog(catalog, 'dsh-better-sidebar', { limit: 5, installed: new Set(['dsh-better-sidebar']) })
   assert.equal(matches[0].installed, true)
+})
+
+// --- diagnostic tail ------------------------------------------------------
+check('tail keeps short text untouched', () => {
+  assert.equal(tail('done in 1.5s', 700), 'done in 1.5s')
+})
+check('tail trims surrounding whitespace', () => {
+  assert.equal(tail('  padded  ', 100), 'padded')
+})
+check('tail returns the last characters instead of the literal template', () => {
+  const output = `${'x'.repeat(800)}\n[ERR_PNPM_IGNORED_BUILDS] Ignored build scripts: ssh2@1.17.0`
+  const rendered = tail(output, 100)
+  assert.equal(rendered.length, 101)
+  assert.ok(rendered.startsWith('…'))
+  assert.match(rendered, /ERR_PNPM_IGNORED_BUILDS/)
+  assert.doesNotMatch(rendered, /\{flat\.slice/)
 })
 
 // --- restart decision -----------------------------------------------------

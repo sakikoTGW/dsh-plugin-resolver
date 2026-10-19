@@ -67,9 +67,9 @@ export function summarizeChange(change) {
 }
 
 /** Last `limit` characters, flattened. */
-function tail(text, limit) {
+export function tail(text, limit) {
   const flat = String(text ?? '').trim()
-  return flat.length <= limit ? flat : `鈥?{flat.slice(-limit)}`
+  return flat.length <= limit ? flat : `…${flat.slice(-limit)}`
 }
 
 /**
