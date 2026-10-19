@@ -201,9 +201,11 @@ export async function capturePackageRuntime(packageName) {
 }
 
 /**
- * Decide whether install results really require a restart. Bundle additions and
- * changed runtime/client files do; no-op reinstall and metadata-only version
- * bumps do not. A manager-applied in-place change needs no restart either.
+ * Decide whether install results really require a restart. Changed runtime or
+ * client files do; no-op reinstall and metadata-only version bumps do not. A
+ * bundle-set change only needs a restart when the manager could not apply it in
+ * place — a live profile recomposes and mounts the new bundle itself, in which
+ * case an added client half asks for a GUI refresh instead.
  * @param {{before: any, after: any, bundlesBefore: string[], bundlesAfter: string[], managerApplication: string}} input
  */
 export function decideRestart({ before, after, bundlesBefore, bundlesAfter, managerApplication }) {
@@ -212,7 +214,11 @@ export function decideRestart({ before, after, bundlesBefore, bundlesAfter, mana
   const added = [...afterNames].filter((name) => !beforeNames.has(name))
   const removed = [...beforeNames].filter((name) => !afterNames.has(name))
   if (added.length > 0 || removed.length > 0) {
-    return { required: true, reason: `bundle set changed (${[...added, ...removed].join(', ')})`, bundleChanged: true, codeChanged: true, clientChanged: false, versionChanged: false }
+    const changed = [...added, ...removed].join(', ')
+    if (managerApplication === 'applied') {
+      return { required: false, reason: `manager applied the bundle set change in place (${changed})`, bundleChanged: true, codeChanged: true, clientChanged: Boolean(added.length > 0 && after?.hasClient), versionChanged: false }
+    }
+    return { required: true, reason: `bundle set changed (${changed})`, bundleChanged: true, codeChanged: true, clientChanged: false, versionChanged: false }
   }
   if (!before || !after) {
     const required = managerApplication === 'restart-required'
