@@ -194,7 +194,7 @@ npm run ablate  # 消融
 ## 已知限制
 
 - 兼容性以 npm 元数据里的 peer / `engines.dsh` 为准，宿主启动预检另有判断时以宿主为准；
-- **替换已加载插件**仍需要重启宿主（loader 模块缓存 + 打包宿主无 Node 内部 loader）；`plugin_install` 会先比较安装前后的 bundle 集合与运行时文件 hash，只有真正变化时才报 `restart-required`；
+- **替换已加载插件**仍需要重启宿主（loader 模块缓存 + 打包宿主无 Node 内部 loader）；**新增 bundle** 只看管理器的应用结果：管理器就地应用（HMR 重组合）时不再报 `restart-required`，只有它自己要求重启时才报；带 client 半的新插件会额外提示刷新 GUI；
 - 同名歧义不猜，需要调用方给 `owner=` 或完整 spec；
 - 目录是社区维护的第三方列表，插件只保证"按声明来源装对版本"，不做安全审计；
 - GitHub 源码构建依赖宿主环境里的 `pnpm`（PATH 或 `DSH_PNPM_PATH`）与 `tar`，大仓库首次构建较慢。

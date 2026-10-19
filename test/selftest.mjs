@@ -165,10 +165,21 @@ check('restart: runtime code change needs restart', () => {
   assert.equal(decision.required, true)
   assert.equal(decision.codeChanged, true)
 })
-check('restart: added bundle needs restart', () => {
+check('restart: added bundle applied in place needs no restart', () => {
   const decision = decideRestart({ before: null, after: runtime('1.0.0', 'a'), bundlesBefore: ['dsh-plugin-resolver'], bundlesAfter: ['dsh-plugin-resolver', 'new-bundle'], managerApplication: 'applied' })
-  assert.equal(decision.required, true)
+  assert.equal(decision.required, false)
   assert.equal(decision.bundleChanged, true)
+  assert.match(decision.reason, /applied the bundle set change in place/)
+})
+check('restart: added bundle with a client half asks for a GUI refresh', () => {
+  const decision = decideRestart({ before: null, after: runtime('1.0.0', 'a', { hasClient: true, clientHash: 'a' }), bundlesBefore: ['dsh-plugin-resolver'], bundlesAfter: ['dsh-plugin-resolver', 'new-bundle'], managerApplication: 'applied' })
+  assert.equal(decision.required, false)
+  assert.equal(decision.clientChanged, true)
+})
+check('restart: added bundle the manager could not apply needs restart', () => {
+  const decision = decideRestart({ before: null, after: runtime('1.0.0', 'a'), bundlesBefore: ['dsh-plugin-resolver'], bundlesAfter: ['dsh-plugin-resolver', 'new-bundle'], managerApplication: 'restart-required' })
+  assert.equal(decision.required, true)
+  assert.match(decision.reason, /bundle set changed/)
 })
 check('restart: client-half change needs restart', () => {
   const decision = decideRestart({ before: runtime('1.0.0', 'a', { hasClient: true, clientHash: 'x' }), after: runtime('1.0.1', 'b', { hasClient: true, clientHash: 'y' }), ...noBundles, managerApplication: 'restart-required' })
