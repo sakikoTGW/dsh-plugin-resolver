@@ -80,6 +80,74 @@ check('engines.dsh is enforced', () => {
   }
   assert.equal(chooseCompatibleVersion(engineDoc, '0.2.0-rc.2').version, '1.0.0')
 })
+check('engines.dsh decides alone when peers disagree', () => {
+  // The host's app-boot rule: an own engines.dsh range wins, peers are ignored.
+  const conflict = {
+    versions: {
+      '1.0.0': {
+        engines: { dsh: '>=0.2.0-rc.2 <0.3.0' },
+        peerDependencies: { '@deepseek-ai/dsh-agent': '^0.3.0' },
+      },
+    },
+    tags: { latest: '1.0.0' },
+  }
+  assert.equal(chooseCompatibleVersion(conflict, '0.2.1-rc.2').version, '1.0.0')
+})
+check('engines.dsh vetoes an otherwise-compatible peer line', () => {
+  const veto = {
+    versions: {
+      '2.0.0': {
+        engines: { dsh: '>=0.3.0' },
+        peerDependencies: { '@deepseek-ai/dsh-agent': '^0.2.0-rc.2' },
+      },
+      '1.0.0': { peerDependencies: { '@deepseek-ai/dsh-agent': '^0.2.0-rc.2' } },
+    },
+    tags: {},
+  }
+  const chosen = chooseCompatibleVersion(veto, '0.2.1-rc.2')
+  assert.equal(chosen.version, '1.0.0')
+  assert.match(chosen.rejected.map((item) => item.version).join(','), /2\.0\.0/)
+})
+check('peer line still gates versions without engines.dsh', () => {
+  const peerOnly = {
+    versions: { '3.0.0': { peerDependencies: { '@deepseek-ai/dsh-agent': '^0.3.0' } } },
+    tags: { latest: '3.0.0' },
+  }
+  assert.equal(chooseCompatibleVersion(peerOnly, '0.2.1-rc.2').version, null)
+})
+check('optional dsh peers still gate the version like the host', () => {
+  // The host precheck never reads peerDependenciesMeta, so an optional dsh peer
+  // whose range rejects the runtime makes the version incompatible anyway.
+  const optionalPeer = {
+    versions: {
+      '1.0.0': {
+        peerDependencies: { '@deepseek-ai/dsh-agent': '^0.3.0' },
+        peerDependenciesMeta: { '@deepseek-ai/dsh-agent': { optional: true } },
+      },
+    },
+    tags: { latest: '1.0.0' },
+  }
+  assert.equal(chooseCompatibleVersion(optionalPeer, '0.2.1-rc.2').version, null)
+})
+check('workspace peer ranges mean the running host', () => {
+  const workspacePeer = {
+    versions: { '1.0.0': { peerDependencies: { '@deepseek-ai/dsh-tools': 'workspace:*' } } },
+    tags: { latest: '1.0.0' },
+  }
+  assert.equal(chooseCompatibleVersion(workspacePeer, '0.2.1-rc.2').version, '1.0.0')
+})
+check('empty engines.dsh is unmet', () => {
+  const emptyEngine = {
+    versions: {
+      '1.0.0': {
+        engines: { dsh: '' },
+        peerDependencies: { '@deepseek-ai/dsh-agent': '^0.2.0-rc.2' },
+      },
+    },
+    tags: { latest: '1.0.0' },
+  }
+  assert.equal(chooseCompatibleVersion(emptyEngine, '0.2.1-rc.2').version, null)
+})
 
 check('sibling @deepseek-ai/* packages are not runtime constraints', () => {
   const siblingDoc = {

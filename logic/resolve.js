@@ -1,4 +1,4 @@
-﻿// Reloadable module: local dependencies carry this module's `?v=` query.
+// Reloadable module: local dependencies carry this module's `?v=` query.
 const __v = new URL(import.meta.url).searchParams.get('v') ?? ''
 const __q = (name) => `./${name}${__v === '' ? '' : `?v=${encodeURIComponent(__v)}`}`
 const { baseName, githubSpecOf, normalizeCatalog, repoSlugOf, searchCatalog } = await import(__q('catalog.js'))
@@ -20,6 +20,9 @@ const NPM_TARGET_RE = /^(@[^/@\s]+\/[^@\s]+|[^@/\s#]+)(?:@([^\s]+))?$/
 
 /** Clear hints that the target is already a concrete install spec. */
 const EXPLICIT_SPEC_RE = /^(github:|git\+|file:|link:|https?:\/\/|\.{0,2}[\\/])/i
+
+/** Peer ranges the host reads as "the running DSH version" itself. */
+const WORKSPACE_RUNTIME_RANGES = new Set(['workspace:^', 'workspace:~', 'workspace:*'])
 
 /**
  * Read the running DSH core version from the manager's own bundle inventory.
@@ -99,9 +102,9 @@ export async function npmPackage(name, registry) {
 /**
  * Choose the newest published version that accepts the running DSH version.
  *
- * Only non-optional `@deepseek-ai/*` peers and an `engines.dsh` range are
- * treated as runtime constraints: a plugin declares its DSH support line there
- * independently of what a caret over a `0.x` prerelease happens to permit.
+ * Runtime constraints follow the host's own rule (see `peerConstraint`): a
+ * version's `engines.dsh` range decides alone, otherwise its non-optional
+ * `@deepseek-ai/dsh*` peers do — never a caret over a `0.x` prerelease.
  *
  * @param {{versions: Record<string, any>, tags: Record<string, string>}} doc
  * @param {string | null} runtime
@@ -126,7 +129,7 @@ export function chooseCompatibleVersion(doc, runtime) {
     if (constraint.ok) {
       return {
         version,
-        reason: `newest of ${all.length} published versions whose DSH peer range accepts ${runtime}`,
+        reason: `newest of ${all.length} published versions whose DSH constraint accepts ${runtime}`,
         rejected,
       }
     }
@@ -138,32 +141,50 @@ export function chooseCompatibleVersion(doc, runtime) {
 /**
  * Check one published version's runtime constraints against the running DSH.
  *
- * Only the Host's own `@deepseek-ai/dsh*` packages share the runtime version
- * line. Sibling libraries such as `@deepseek-ai/cordis` or
+ * Mirrors the host's own precheck (`dsh-app-boot` `unmetRequirements`):
+ * - an own `engines.dsh` range decides alone and peer dependencies are ignored;
+ * - otherwise every `@deepseek-ai/dsh` / `@deepseek-ai/dsh-*` peer must accept
+ *   the runtime, optional (`peerDependenciesMeta`) or not — the host does not
+ *   read that metadata;
+ * - `workspace:^`, `workspace:~` and `workspace:*` peer ranges mean the running
+ *   host itself; an empty or invalid range is unmet.
+ *
+ * Sibling libraries such as `@deepseek-ai/cordis` or
  * `@deepseek-ai/schemastery` have their own version numbers and are therefore
  * not runtime constraints.
  *
  * @param {any} manifest
  * @param {string} runtime
- * @returns {{ok: true} | {ok: false, reason: string}}
+ * @returns {{ok: true, reason: string} | {ok: false, reason: string}}
  */
 function peerConstraint(manifest, runtime) {
-  const peers = manifest.peerDependencies ?? {}
-  const optional = manifest.peerDependenciesMeta ?? {}
+  const engines = manifest.engines
+  if ('engines' in manifest) {
+    if (engines === null || typeof engines !== 'object' || Array.isArray(engines)) {
+      return { ok: false, reason: 'engines is not an object' }
+    }
+    if (Object.hasOwn(engines, 'dsh')) {
+      const range = engines.dsh
+      if (typeof range !== 'string') return { ok: false, reason: 'engines.dsh is not a string' }
+      if (range.trim() === '' || !satisfies(runtime, range)) {
+        return { ok: false, reason: `engines.dsh wants ${range}, host is ${runtime}` }
+      }
+      return { ok: true, reason: `engines.dsh ${range}` }
+    }
+  }
+  const peers = manifest.peerDependencies
+  if (peers === null || typeof peers !== 'object' || Array.isArray(peers)) {
+    return { ok: true, reason: 'no DSH constraint' }
+  }
   const checked = []
   for (const [name, range] of Object.entries(peers)) {
     if (name !== '@deepseek-ai/dsh' && !name.startsWith('@deepseek-ai/dsh-')) continue
-    if (optional[name]?.optional === true) continue
-    if (typeof range !== 'string' || range.trim() === '') continue
+    if (typeof range !== 'string') return { ok: false, reason: `${name} declares a non-string range` }
     checked.push(`${name}@${range}`)
-    if (!satisfies(runtime, range)) {
+    const effective = WORKSPACE_RUNTIME_RANGES.has(range) ? runtime : range
+    if (effective.trim() === '' || !satisfies(runtime, effective)) {
       return { ok: false, reason: `${name} needs ${range}, host is ${runtime}` }
     }
-  }
-  const engine = manifest.engines?.dsh
-  if (typeof engine === 'string' && engine !== '') {
-    checked.push(`engines.dsh ${engine}`)
-    if (!satisfies(runtime, engine)) return { ok: false, reason: `engines.dsh wants ${engine}, host is ${runtime}` }
   }
   return { ok: true, reason: checked.length > 0 ? checked.join('; ') : 'no DSH constraint' }
 }
