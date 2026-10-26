@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640" role="img" aria-label="DSH Plugin Resolver">
+  <defs>
+    <linearGradient id="mark" x1="592" y1="120" x2="688" y2="216" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7C93FF"/>
+      <stop offset=".5" stop-color="#4D6BFE"/>
+      <stop offset="1" stop-color="#2A3FD0"/>
+    </linearGradient>
+    <radialGradient id="glowA" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(300 80) scale(760 520)">
+      <stop offset="0" stop-color="#4D6BFE" stop-opacity=".34"/>
+      <stop offset="1" stop-color="#4D6BFE" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowB" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1040 620) scale(620 460)">
+      <stop offset="0" stop-color="#7C4DFF" stop-opacity=".26"/>
+      <stop offset="1" stop-color="#7C4DFF" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="56" height="56" patternUnits="userSpaceOnUse">
+      <path d="M56 0H0V56" fill="none" stroke="#ffffff" stroke-opacity=".04" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1280" height="640" fill="#0A0E1A"/>
+  <rect width="1280" height="640" fill="url(#glowA)"/>
+  <rect width="1280" height="640" fill="url(#glowB)"/>
+  <rect width="1280" height="640" fill="url(#grid)"/>
+
+  <g transform="translate(592 116) scale(1.5)">
+    <rect width="64" height="64" rx="15" fill="url(#mark)"/>
+    <g fill="#ffffff">
+      <circle cx="16.5" cy="20" r="2.6" opacity=".5"/>
+      <circle cx="16.5" cy="32" r="2.6" opacity=".5"/>
+      <circle cx="16.5" cy="44" r="2.6"/>
+    </g>
+    <g fill="none" stroke="#ffffff" stroke-linecap="round">
+      <path d="M20.5 20.8 29.2 30" stroke-width="1.8" stroke-opacity=".38"/>
+      <path d="M20.5 32h8.7" stroke-width="1.8" stroke-opacity=".38"/>
+      <path d="M20.5 43.2 29.2 34" stroke-width="1.8" stroke-opacity=".55"/>
+      <path d="M30.5 32.2 38.6 40.4 55 22.6" stroke-width="4.6"/>
+    </g>
+  </g>
+
+  <text x="640" y="276" text-anchor="middle" font-family="ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="54" font-weight="700" letter-spacing="-1.2"><tspan fill="#94A2C8">dsh-plugin-</tspan><tspan fill="#F4F7FF">resolver</tspan></text>
+  <text x="640" y="330" text-anchor="middle" font-family="ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="26" font-weight="600" fill="#DCE4FF">Install the right plugin in one call.</text>
+  <text x="640" y="368" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="16" fill="#7E8CB4">catalog → disambiguate → compatible version → install → verify</text>
+
+  <g font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="15">
+    <rect x="300" y="420" width="200" height="42" rx="21" fill="#121A30" stroke="#2A3864"/>
+    <text x="400" y="447" text-anchor="middle" fill="#CFDAFB">45 → 6 tool calls</text>
+    <rect x="516" y="420" width="176" height="42" rx="21" fill="#121A30" stroke="#2A3864"/>
+    <text x="604" y="447" text-anchor="middle" fill="#CFDAFB">0 failed retries</text>
+    <rect x="708" y="420" width="272" height="42" rx="21" fill="#121A30" stroke="#2A3864"/>
+    <text x="844" y="447" text-anchor="middle" fill="#CFDAFB">9 decisions · 1.23 s</text>
+  </g>
+
+  <text x="640" y="560" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="14" fill="#67749B">MIT · DSH ≥ 0.2.0-rc.2 &lt; 0.3.0 · Node ≥ 20 · host-only, pure ESM</text>
+</svg>

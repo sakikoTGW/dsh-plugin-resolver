@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 400" width="1280" height="400" role="img" aria-label="DSH Plugin Resolver — install the right plugin in one call">
+  <defs>
+    <linearGradient id="mark" x1="72" y1="88" x2="168" y2="184" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7C93FF"/>
+      <stop offset=".5" stop-color="#4D6BFE"/>
+      <stop offset="1" stop-color="#2A3FD0"/>
+    </linearGradient>
+    <radialGradient id="glowA" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(180 60) scale(620 420)">
+      <stop offset="0" stop-color="#4D6BFE" stop-opacity=".38"/>
+      <stop offset="1" stop-color="#4D6BFE" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowB" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1120 400) scale(520 380)">
+      <stop offset="0" stop-color="#7C4DFF" stop-opacity=".28"/>
+      <stop offset="1" stop-color="#7C4DFF" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0V48" fill="none" stroke="#ffffff" stroke-opacity=".045" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1280" height="400" fill="#0A0E1A"/>
+  <rect width="1280" height="400" fill="url(#glowA)"/>
+  <rect width="1280" height="400" fill="url(#glowB)"/>
+  <rect width="1280" height="400" fill="url(#grid)"/>
+
+  <g transform="translate(72 88) scale(1.5)">
+    <rect width="64" height="64" rx="15" fill="url(#mark)"/>
+    <g fill="#ffffff">
+      <circle cx="16.5" cy="20" r="2.6" opacity=".5"/>
+      <circle cx="16.5" cy="32" r="2.6" opacity=".5"/>
+      <circle cx="16.5" cy="44" r="2.6"/>
+    </g>
+    <g fill="none" stroke="#ffffff" stroke-linecap="round">
+      <path d="M20.5 20.8 29.2 30" stroke-width="1.8" stroke-opacity=".38"/>
+      <path d="M20.5 32h8.7" stroke-width="1.8" stroke-opacity=".38"/>
+      <path d="M20.5 43.2 29.2 34" stroke-width="1.8" stroke-opacity=".55"/>
+      <path d="M30.5 32.2 38.6 40.4 55 22.6" stroke-width="4.6"/>
+    </g>
+  </g>
+
+  <text x="198" y="134" font-family="ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="40" font-weight="700" letter-spacing="-0.8"><tspan fill="#94A2C8">dsh-plugin-</tspan><tspan fill="#F4F7FF">resolver</tspan></text>
+  <text x="200" y="190" font-family="ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="27" font-weight="600" fill="#DCE4FF">Install the right plugin in one call.</text>
+  <text x="200" y="226" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="15.5" fill="#7E8CB4">catalog → disambiguate → compatible version → install → verify</text>
+
+  <g font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="14.5">
+    <rect x="198" y="262" width="204" height="40" rx="20" fill="#121A30" stroke="#2A3864"/>
+    <text x="216" y="287" fill="#CFDAFB">45 → 6 tool calls</text>
+    <rect x="414" y="262" width="126" height="40" rx="20" fill="#121A30" stroke="#2A3864"/>
+    <text x="432" y="287" fill="#CFDAFB">0 retries</text>
+    <rect x="552" y="262" width="178" height="40" rx="20" fill="#121A30" stroke="#2A3864"/>
+    <text x="570" y="287" fill="#CFDAFB">1.23 s decisions</text>
+  </g>
+
+  <text x="72" y="364" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="13" fill="#67749B">MIT · DSH ≥ 0.2.0-rc.2 &lt; 0.3.0 · Node ≥ 20 · host-only, pure ESM</text>
+
+  <g>
+    <rect x="744" y="64" width="464" height="284" rx="16" fill="#0C1122" stroke="#22305C"/>
+    <rect x="744" y="64" width="464" height="44" rx="16" fill="#141B31"/>
+    <rect x="744" y="92" width="464" height="16" fill="#141B31"/>
+    <circle cx="770" cy="86" r="5" fill="#FF6B6B"/>
+    <circle cx="788" cy="86" r="5" fill="#F7C948"/>
+    <circle cx="806" cy="86" r="5" fill="#3FB950"/>
+    <text x="1184" y="91" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="12" fill="#66739A">plugin_resolve</text>
+    <g font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="13.5">
+      <text x="768" y="136" fill="#7EE787">$ plugin_resolve dsh-better-sidebar</text>
+      <text x="768" y="166" fill="#B9C6EA">package: dsh-better-sidebar@0.28.0</text>
+      <text x="768" y="196" fill="#B9C6EA">install spec: dsh-better-sidebar@0.28.0</text>
+      <text x="768" y="226" fill="#B9C6EA">registry: https://registry.npmmirror.com/</text>
+      <text x="768" y="256" fill="#B9C6EA">notes:</text>
+      <text x="768" y="280" fill="#8FA0CC">- newest published version whose DSH</text>
+      <text x="768" y="302" fill="#8FA0CC">  peer range accepts the running host</text>
+    </g>
+    <text x="768" y="326" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="12.5" fill="#4ED08A">✓ DSH-compatible version selected</text>
+  </g>
+</svg>

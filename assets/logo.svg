@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 120" width="600" height="120" role="img" aria-label="DSH Plugin Resolver">
+  <defs>
+    <linearGradient id="mark" x1="6" y1="4" x2="90" y2="92" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7C93FF"/>
+      <stop offset=".5" stop-color="#4D6BFE"/>
+      <stop offset="1" stop-color="#2A3FD0"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(6 12) scale(1.5)">
+    <rect width="64" height="64" rx="15" fill="url(#mark)"/>
+    <g fill="#ffffff">
+      <circle cx="16.5" cy="20" r="2.6" opacity=".5"/>
+      <circle cx="16.5" cy="32" r="2.6" opacity=".5"/>
+      <circle cx="16.5" cy="44" r="2.6"/>
+    </g>
+    <g fill="none" stroke="#ffffff" stroke-linecap="round">
+      <path d="M20.5 20.8 29.2 30" stroke-width="1.8" stroke-opacity=".38"/>
+      <path d="M20.5 32h8.7" stroke-width="1.8" stroke-opacity=".38"/>
+      <path d="M20.5 43.2 29.2 34" stroke-width="1.8" stroke-opacity=".55"/>
+      <path d="M30.5 32.2 38.6 40.4 55 22.6" stroke-width="4.6"/>
+    </g>
+  </g>
+  <text x="126" y="62" font-family="ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="42" font-weight="700" letter-spacing="-0.8"><tspan fill="#68738F">dsh-plugin-</tspan><tspan fill="#4D6BFE">resolver</tspan></text>
+  <text x="127" y="94" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="14.5" letter-spacing="0.3" fill="#6B7590">install the right plugin in one call</text>
+</svg>

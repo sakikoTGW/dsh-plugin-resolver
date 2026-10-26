@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 430" width="1200" height="430" role="img" aria-label="Stable host shell plus hot-reloadable logic">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="430" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0A0E1A"/>
+      <stop offset="1" stop-color="#0C1226"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(300 40) scale(460 280)">
+      <stop offset="0" stop-color="#4D6BFE" stop-opacity=".24"/>
+      <stop offset="1" stop-color="#4D6BFE" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#ffffff" stroke-opacity=".035" stroke-width="1"/>
+    </pattern>
+    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 10 5 0 10z" fill="#4D6BFE"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="430" fill="url(#bg)"/>
+  <rect width="1200" height="430" fill="url(#glow)"/>
+  <rect width="1200" height="430" fill="url(#grid)"/>
+
+  <text x="40" y="58" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="13" fill="#4D6BFE" letter-spacing="2">TWO LAYERS</text>
+  <text x="40" y="100" font-family="ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="29" font-weight="700" fill="#F4F7FF">Stable shell, hot-reloadable logic</text>
+
+  <!-- stable shell -->
+  <g>
+    <rect x="40" y="140" width="470" height="212" rx="14" fill="#0D1220" stroke="#22305C"/>
+    <text x="64" y="174" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="13" fill="#58A6FF">STABLE SHELL</text>
+    <text x="64" y="198" font-family="ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" fill="#8E9BC4">restart to change</text>
+    <g font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="13.5">
+      <text x="64" y="240" fill="#E6EDF3">index.js</text>
+      <text x="196" y="240" fill="#8E9BC4">host entry</text>
+      <text x="64" y="270" fill="#E6EDF3">host/register.js</text>
+      <text x="196" y="270" fill="#8E9BC4">tool schemas + pluginManager bridge</text>
+    </g>
+    <rect x="64" y="300" width="180" height="26" rx="13" fill="#121A30" stroke="#2A3864"/>
+    <text x="78" y="317" font-family="ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" fill="#7FC8FF">changes only on restart</text>
+  </g>
+
+  <!-- arrow -->
+  <g>
+    <line x1="516" y1="246" x2="596" y2="246" stroke="#4D6BFE" stroke-width="2" marker-end="url(#ar)"/>
+    <text x="556" y="228" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="11.5" fill="#A9B8E8">import ?v=mtime</text>
+    <rect x="520" y="262" width="112" height="26" rx="13" fill="#0F2418" stroke="#1E4A2E"/>
+    <text x="576" y="279" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="11.5" fill="#7EE0A1">3 ms</text>
+  </g>
+
+  <!-- hot logic -->
+  <g>
+    <rect x="620" y="140" width="540" height="212" rx="14" fill="#0D1220" stroke="#22305C"/>
+    <text x="644" y="174" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="13" fill="#2FBF71">HOT LOGIC</text>
+    <text x="644" y="198" font-family="ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" fill="#8E9BC4">re-imported on every tool call</text>
+    <g font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="13.5">
+      <text x="644" y="240" fill="#C9D3EA">logic/catalog.js</text>
+      <text x="644" y="266" fill="#C9D3EA">logic/resolve.js</text>
+      <text x="644" y="292" fill="#C9D3EA">logic/install.js</text>
+      <text x="860" y="240" fill="#C9D3EA">logic/semver.js</text>
+      <text x="860" y="266" fill="#C9D3EA">logic/util.js</text>
+      <text x="860" y="292" fill="#C9D3EA">logic/api.js</text>
+    </g>
+    <rect x="644" y="314" width="216" height="26" rx="13" fill="#0F2418" stroke="#1E4A2E"/>
+    <text x="658" y="331" font-family="ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" fill="#7EE0A1">edits apply on the next call</text>
+  </g>
+
+  <text x="40" y="398" font-family="ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="14" fill="#8E9BC4">Node caches ES modules by full URL — a fresh <tspan font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" fill="#C9D3EA">?v=</tspan> is a fresh module instance. Restart costs 30–40 s; this costs 3 ms.</text>
+</svg>
