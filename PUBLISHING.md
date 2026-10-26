@@ -82,5 +82,5 @@ DSH **没有中心索引**：市场是一个自托管的 JSON 索引文件，用
 - [x] 市场索引已切到 npm 源（官方推荐），并升到 0.1.3（`publishTimestamp` = npm 实际发布时间）
 - [x] dsh.so / dshbase / awesome-dsh-plugin 收录已生效（见第四节）
 - [ ] 等 dsh.so 重验 0.1.3（其流水线自动进行，必要时在页面重新提交）
-- [ ] 可选：GitHub Release `v0.1.3`（仓库目前只有 tag，没有 Release）
-- [ ] 提交前做一次 `node test/selftest.mjs && node test/harness.mjs`（45 项）与 `node test/benchmark.mjs` 复跑
+- [x] GitHub Release `v0.1.3` 已建：<https://github.com/sakikoTGW/dsh-plugin-resolver/releases/tag/v0.1.3>
+- [x] 发布前验证：`node test/selftest.mjs` 35/35、`node test/harness.mjs` 10/10（45 项）、`node test/benchmark.mjs` exit 0；CI `test` 在发布提交上 success
