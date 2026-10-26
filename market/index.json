@@ -16,8 +16,8 @@
         "zh": "DSH 插件安装助手"
       },
       "description": {
-        "en": "One tool call installs a DSH plugin correctly: -87% steps and 0 failed retries versus the manual flow.",
-        "zh": "一次工具调用把插件装对：相比手工流程少 87% 的步骤、0 次失败重试。"
+        "en": "One tool call installs a DSH plugin correctly: -87% tool calls and 0 failed retries versus the manual flow.",
+        "zh": "一次工具调用把插件装对：相比手工流程少 87% 的工具调用、0 次失败重试。"
       },
       "author": "sakikoTGW",
       "homepage": "https://github.com/sakikoTGW/dsh-plugin-resolver#readme",

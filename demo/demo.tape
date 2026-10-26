@@ -3,8 +3,9 @@
 #   vhs demo/demo.tape
 #
 # The checked-in assets/demo.gif was rendered from a real `npm test` log on
-# 2026-10-27 (34 checks, exit 0). Re-running this tape captures a fresh run on
-# your machine; no output lines are written by hand.
+# 2026-10-27 (39 checks then; `npm test` now reports 45 = 35 logic + 10 harness).
+# Re-running this tape captures a fresh run on your machine; no output lines
+# are written by hand.
 Output assets/demo.gif
 Set Shell "pwsh"
 Set FontSize 12

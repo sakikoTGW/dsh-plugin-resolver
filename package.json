@@ -1,6 +1,6 @@
 {
   "name": "dsh-plugin-resolver",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Agent-facing DSH plugin resolver: search the catalog, pick a version the running DSH accepts, install (registry or GitHub-source build), and verify - no trial and error.",
   "type": "module",
   "main": "index.js",
@@ -14,6 +14,7 @@
     "logic",
     "cordis.patch.yml",
     "README.md",
+    "README.en.md",
     "BENCHMARK.md",
     "ABLATION.md"
   ],

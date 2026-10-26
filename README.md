@@ -1,16 +1,16 @@
 <p align="center">
-  <img src="assets/banner.svg" alt="DSH Plugin Resolver — install the right plugin in one call" width="1280">
+  <img src="https://raw.githubusercontent.com/sakikoTGW/dsh-plugin-resolver/main/assets/banner.svg" alt="DSH Plugin Resolver — install the right plugin in one call" width="1280">
 </p>
 
 <p align="center">
-  <strong>简体中文</strong> | <a href="README.en.md">English</a>
+  <strong>简体中文</strong> | <a href="https://github.com/sakikoTGW/dsh-plugin-resolver/blob/main/README.en.md">English</a>
 </p>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/dsh-plugin-resolver"><img alt="npm" src="https://img.shields.io/npm/v/dsh-plugin-resolver?style=flat-square&color=4D6BFE&logo=npm&logoColor=white"></a>
   <a href="https://github.com/sakikoTGW/dsh-plugin-resolver/actions/workflows/test.yml"><img alt="test" src="https://img.shields.io/github/actions/workflow/status/sakikoTGW/dsh-plugin-resolver/test.yml?style=flat-square&label=test&color=2FBF71"></a>
-  <img alt="39 checks" src="https://img.shields.io/badge/checks-39%20passing-2FBF71?style=flat-square">
-  <a href="LICENSE"><img alt="MIT" src="https://img.shields.io/badge/license-MIT-263146?style=flat-square"></a>
+  <img alt="45 checks" src="https://img.shields.io/badge/checks-45%20passing-2FBF71?style=flat-square">
+  <a href="https://github.com/sakikoTGW/dsh-plugin-resolver/blob/main/LICENSE"><img alt="MIT" src="https://img.shields.io/badge/license-MIT-263146?style=flat-square"></a>
   <img alt="DSH" src="https://img.shields.io/badge/DSH-0.2.0--rc.2%2B-4D6BFE?style=flat-square">
   <img alt="Node" src="https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white">
 </p>
@@ -26,9 +26,9 @@
 > host-only 插件 · 4 个工具 · 纯 ESM 免构建 · DSH `>=0.2.0-rc.2 <0.3.0` · Node `>=20`
 
 <p align="center">
-  <img src="assets/demo.gif" alt="终端运行 npm test：29 条逻辑检查与 10 条宿主无关 harness 检查全部通过" width="760">
+  <img src="https://raw.githubusercontent.com/sakikoTGW/dsh-plugin-resolver/main/assets/demo.gif" alt="终端运行 npm test（2026-10-27 录制，当时 39 项检查）" width="760">
 </p>
-<p align="center"><sub>真实输出：<code>npm test</code> 39 项检查全绿（<a href="demo/demo.tape">VHS tape</a> 可重录）</sub></p>
+<p align="center"><sub>真实输出：2026-10-27 录制时为 39 项；当前 <code>npm test</code> 为 45 项（35 逻辑 + 10 harness）全绿（<a href="https://github.com/sakikoTGW/dsh-plugin-resolver/blob/main/demo/demo.tape">VHS tape</a> 可重录）</sub></p>
 
 ## 目录
 
@@ -48,12 +48,12 @@
 
 ## 为什么需要它
 
-给一台 DSH 装两个真实插件：`dsh-better-sidebar`（npm 上的 `latest` 不保证兼容当前内核）和 `dsh-browser`（6 个同名 owner、GitHub-only、还要本地构建）。把安装交给 agent 时，手工路径实际发生的是：
+给一台 DSH 装两个真实插件：`dsh-better-sidebar`（npm 上的 `latest` 不保证兼容当前内核）和 `dsh-browser`（9 个同名 owner、GitHub-only、还要本地构建）。把安装交给 agent 时，手工路径实际发生的是：
 
 | 手工路径上会发生什么 | 代价（真机实测） |
 |---|---|
-| 从 GitHub Pages 拉一次社区目录（6.4 MB） | **91 s**，模型还得读大量条目 |
-| 目录里 287 组同名，`dsh-browser` 一条就有 6 个 owner | 靠猜；其中 **51 组**星数最高的是 GitHub-only、同组却有 npm 包 |
+| 从 GitHub Pages 拉一次社区目录（8.78 MB，2026-10-27；2026-10-18 为 6.4 MB） | **91 s**（2026-10-18 实测），模型还得读大量条目 |
+| 目录里 406 组同名，`dsh-browser` 一条就有 9 个 owner | 靠猜；其中 **64 组**星数最高的是 GitHub-only、同组却有 npm 包 |
 | `latest` 未必兼容当前内核（peer 线或 `engines.dsh` 高于宿主） | 装上后被启动预检**静默禁用** |
 | 直连 npmjs 慢 | 两次 **90 s 超时**，换镜像后 13.4 s |
 | GitHub-only 仓库不提交构建产物 | `main` 指向不存在的文件——**装上了也永远不会加载** |
@@ -66,7 +66,7 @@
 ## 怎么工作
 
 <p align="center">
-  <img src="assets/flow.svg" alt="一次工具调用的五个阶段：检索、解析、安装、校验、上报" width="1200">
+  <img src="https://raw.githubusercontent.com/sakikoTGW/dsh-plugin-resolver/main/assets/flow.svg" alt="一次工具调用的五个阶段：检索、解析、安装、校验、上报" width="1200">
 </p>
 <p align="center"><sub>两条必须如实上报的失败路径也画在图里：没有兼容版本、装上了但没挂载。</sub></p>
 
@@ -86,7 +86,7 @@ https://sakikoTGW.github.io/dsh-plugin-resolver/market/index.json
 
 然后安装 `dsh-plugin-resolver`。
 
-### npm（已发布 `0.1.2`）
+### npm（已发布 `0.1.3`）
 
 ```sh
 dsh plugin --profile <profile> add dsh-plugin-resolver
@@ -99,32 +99,32 @@ dsh plugin --profile <profile> add dsh-plugin-resolver
 dsh plugin --profile <profile> add github:sakikoTGW/dsh-plugin-resolver#<commit>
 
 # 或者本地打包
-npm pack && dsh plugin --profile <profile> add ./dsh-plugin-resolver-0.1.2.tgz
+npm pack && dsh plugin --profile <profile> add ./dsh-plugin-resolver-0.1.3.tgz
 ```
 
 装完重启一次宿主。之后：
 
 ```text
-“帮我装 dsh-browser”          → 列出 6 个同名候选，要求 owner=，不猜
+“帮我装 dsh-browser”          → 列出 9 个同名候选，要求 owner=，不猜
 “装 dsh-builtin-browser”      → 选到与当前内核兼容的版本并装好
 “帮我装 dsh-better-sidebar”   → latest 不兼容时自动降级，并说明跳过了哪些版本
 ```
 
 <p align="center">
-  <img src="assets/demo-resolve.gif" alt="plugin_resolve 真实调用动画：从目录与 registry 解析出兼容版本" width="760">
+  <img src="https://raw.githubusercontent.com/sakikoTGW/dsh-plugin-resolver/main/assets/demo-resolve.gif" alt="plugin_resolve 真实调用动画：从目录与 registry 解析出兼容版本" width="760">
 </p>
-<p align="center"><sub>真实调用动画（本地 harness 捕获，宿主 0.2.0-rc.2）：从真实目录与 registry 解析出一个兼容版本。</sub></p>
+<p align="center"><sub>真实调用动画（2026-10-18 本地 harness 录制，宿主 0.2.0-rc.2）：从真实目录与 registry 解析出一个兼容版本。</sub></p>
 
-真实调用长这样（宿主 0.2.0-rc.2）：
+真实调用长这样（宿主 0.2.1-rc.2）：
 
 ```text
 $ plugin_resolve dsh-builtin-browser
-target kind: npm   running DSH: 0.2.0-rc.2
+target kind: npm   running DSH: 0.2.1-rc.2
 package: dsh-builtin-browser@0.4.15
 install spec: dsh-builtin-browser@0.4.15
-registry: https://registry.npmmirror.com/
+registry: https://registry.npmmirror.com
 notes:
-- newest of 41 published versions whose DSH peer range accepts 0.2.0-rc.2
+- newest of 41 published versions whose DSH constraint accepts 0.2.1-rc.2
 ```
 
 安装调用还会带上校验与重启判定：
@@ -132,8 +132,8 @@ notes:
 ```text
 $ plugin_install dsh-better-sidebar
 target kind: npm   running DSH: 0.2.1-rc.2
-package: dsh-better-sidebar@0.28.0
-install spec: dsh-better-sidebar@0.28.0
+package: dsh-better-sidebar@0.28.1
+install spec: dsh-better-sidebar@0.28.1
 ...
 restart: not required — manager applied the change in place
 ```
@@ -142,26 +142,26 @@ restart: not required — manager applied the change in place
 
 | 工具 | 作用 | 是否改动环境 |
 |---|---|---|
-| <img src="assets/icons/search.svg" width="18" alt=""> `plugin_search` | 搜社区目录（npm 载体优先），排序并显式标出同名歧义 | 只读 |
-| <img src="assets/icons/resolve.svg" width="18" alt=""> `plugin_resolve` | 只解析不装：目录条目、兼容版本、registry、是否需要源码构建 | 只读 |
-| <img src="assets/icons/install.svg" width="18" alt=""> `plugin_install` | 完整安装：选版本 → 安装/构建 → 回读校验 → 下一步提示 | 写 profile |
-| <img src="assets/icons/status.svg" width="18" alt=""> `plugin_status` | 已装 bundle / loader entry / fiberPhase 盘点 | 只读 |
+| <img src="https://raw.githubusercontent.com/sakikoTGW/dsh-plugin-resolver/main/assets/icons/search.svg" width="18" alt=""> `plugin_search` | 搜社区目录（npm 载体优先），排序并显式标出同名歧义 | 只读 |
+| <img src="https://raw.githubusercontent.com/sakikoTGW/dsh-plugin-resolver/main/assets/icons/resolve.svg" width="18" alt=""> `plugin_resolve` | 只解析不装：目录条目、兼容版本、registry、是否需要源码构建 | 只读 |
+| <img src="https://raw.githubusercontent.com/sakikoTGW/dsh-plugin-resolver/main/assets/icons/install.svg" width="18" alt=""> `plugin_install` | 完整安装：选版本 → 安装/构建 → 回读校验 → 下一步提示 | 写 profile |
+| <img src="https://raw.githubusercontent.com/sakikoTGW/dsh-plugin-resolver/main/assets/icons/status.svg" width="18" alt=""> `plugin_status` | 已装 bundle / loader entry / fiberPhase 盘点 | 只读 |
 
 <p align="center">
-  <img src="assets/tool-search.png" alt="plugin_search 真实输出：6 个同名 dsh-browser 候选，要求 owner=" width="980">
+  <img src="https://raw.githubusercontent.com/sakikoTGW/dsh-plugin-resolver/main/assets/tool-search.png" alt="plugin_search 真实输出：9 个同名 dsh-browser 候选，要求 owner=" width="980">
 </p>
 <p align="center"><sub>真实输出（本地 harness，2026-10-27）：同名歧义不会被猜，候选带 owner、星数、npm 名与安装命令。</sub></p>
 
 <p align="center">
-  <img src="assets/tool-resolve.png" alt="plugin_resolve 真实输出：target kind / package / install spec / registry" width="900">
+  <img src="https://raw.githubusercontent.com/sakikoTGW/dsh-plugin-resolver/main/assets/tool-resolve.png" alt="plugin_resolve 真实输出：target kind / package / install spec / registry" width="900">
 </p>
 <p align="center"><sub>真实输出：只解析、不写环境，先给出一份可复核的安装计划。</sub></p>
 
 ## 版本选择规则
 
 1. **运行时版本**取 `pluginManager.listBundles()` 里 `@deepseek-ai/dsh-base` 的版本；
-2. 逐版本从高到低检查：非可选 **`@deepseek-ai/dsh*`** peer 必须满足运行时版本，声明了 **`engines.dsh`** 也要满足；
-3. `@deepseek-ai/cordis`、`@deepseek-ai/schemastery` 等**同命名空间但不同版本线**的库**不算**运行时约束——这条曾把 4/8 个包误判成“无兼容版本”（见 [ABLATION](ABLATION.md)）；
+2. **声明了 `engines.dsh` 的版本只看它**（与宿主 `dsh-app-boot` 预检一致，peer 不再参与）；
+3. **未声明 `engines.dsh` 时**，所有 `@deepseek-ai/dsh` / `@deepseek-ai/dsh-*` peer 必须满足（**含 optional**；`workspace:^`、`workspace:~`、`workspace:*` 视作当前宿主）；`@deepseek-ai/cordis`、`@deepseek-ai/schemastery` 等**同命名空间但不同版本线**的库**不算**运行时约束——误把兄弟库当内核线曾把 4/8 个包误判成“无兼容版本”（见 [ABLATION](https://github.com/sakikoTGW/dsh-plugin-resolver/blob/main/ABLATION.md)）；
 4. 取第一个通过者；全不通过时列出最近版本的拒绝原因；用户显式给 `version` 时跳过求解。
 
 ## 安装路径与重启判定
@@ -181,13 +181,13 @@ restart: not required — manager applied the change in place
 ## 结构
 
 <p align="center">
-  <img src="assets/architecture.svg" alt="稳定壳与热加载逻辑两层结构" width="1200">
+  <img src="https://raw.githubusercontent.com/sakikoTGW/dsh-plugin-resolver/main/assets/architecture.svg" alt="稳定壳与热加载逻辑两层结构" width="1200">
 </p>
 <p align="center"><sub>稳定壳改动要重启；<code>logic/</code> 改动下一次工具调用就生效。</sub></p>
 
 `host/register.js` 每次调用计算 `logic/` 下最大 mtime，以 `import('./logic/api.js?v=<mtime>')` 导入；逻辑模块之间用同一个 `?v=` 传递依赖。Node 的 ESM 缓存按完整 URL 计，于是：
 
-- 改 `logic/` 任何文件 → **下一次工具调用立即生效**，不用重启宿主（实测 3 ms，重启约 30–40 s）
+- 改 `logic/` 任何文件 → **下一次工具调用立即生效**，不用重启宿主（实测 2–5 ms，重启约 30–40 s）
 - 只有改动工具定义层（`index.js` / `host/register.js`）才需要重启
 
 这是为无 HMR 的打包运行环境设计的：宿主拿不到真 HMR 所需的 Node 内部模块加载器，但“重新 import 一个带新 query 的模块”完全可行。
@@ -195,58 +195,58 @@ restart: not required — manager applied the change in place
 ## 效果与证据
 
 <p align="center">
-  <img src="assets/benchmark.svg" alt="手工路径与 resolver 的基准对比：目录、registry、调用次数、端到端耗时" width="1200">
+  <img src="https://raw.githubusercontent.com/sakikoTGW/dsh-plugin-resolver/main/assets/benchmark.svg" alt="手工路径与 resolver 的基准对比：目录、registry、调用次数、端到端耗时" width="1200">
 </p>
 <p align="center"><sub>同一件事的两种路径；数字来自 <a href="BENCHMARK.md">BENCHMARK.md</a> 与 <a href="ABLATION.md">ABLATION.md</a>。</sub></p>
 
 | 指标 | agent 手工路径 | 本插件 | 来源 |
 |---|---|---|---|
-| 工具调用（1 歧义 + 1 GitHub-only） | ≈ 45 次 | **≈ 6 次** | [BENCHMARK](BENCHMARK.md) |
-| 端到端耗时 | 20–25 分钟 | **约 3 分钟**（含不可压缩的安装/编译） | [BENCHMARK](BENCHMARK.md) |
-| 决策链耗时 | 每次重新推 | **1.23 s（9 次调用）** | [BENCHMARK](BENCHMARK.md) |
-| 目录获取 | 91.06 s / 6.4 MB | **0.94 s / 2 个请求** | [BENCHMARK](BENCHMARK.md) |
+| 工具调用（1 歧义 + 1 GitHub-only） | ≈ 45 次 | **≈ 6 次** | [BENCHMARK](https://github.com/sakikoTGW/dsh-plugin-resolver/blob/main/BENCHMARK.md) |
+| 端到端耗时 | 20–25 分钟 | **约 3 分钟**（含不可压缩的安装/编译） | [BENCHMARK](https://github.com/sakikoTGW/dsh-plugin-resolver/blob/main/BENCHMARK.md) |
+| 决策链耗时 | 每次重新推 | **约 1.9 s（9 次调用，2026-10-27）** | [BENCHMARK](https://github.com/sakikoTGW/dsh-plugin-resolver/blob/main/BENCHMARK.md) |
+| 目录获取 | 91.06 s（2026-10-18）/ 8.78 MB（2026-10-27） | **1.5 s / 2 个请求（2026-10-27）** | [BENCHMARK](https://github.com/sakikoTGW/dsh-plugin-resolver/blob/main/BENCHMARK.md) |
 | 安装失败重试 | 2 次 90 s 超时 | **0 次** | 会话日志 |
-| 安装后额外探测 | 2 次 | **0 次** | [BENCHMARK](BENCHMARK.md) |
+| 安装后额外探测 | 2 次 | **0 次** | [BENCHMARK](https://github.com/sakikoTGW/dsh-plugin-resolver/blob/main/BENCHMARK.md) |
 
 消融测试逐项拆能力，结果不是“慢一点”，而是**装错版本 / 装错来源 / 装完不加载 / 静默失败**：
 
-- 目录 5,065 条，287 组同名；**51 组**“按星数/第一个命中”会装到另一条来源
-- 8 个真实包里 **2 个 `latest` 与宿主不兼容**；朴素 peer 判断会把 **4/8** 误判成“装不了”
-- 同一份 registry 元数据：npmjs **784 ms** vs 镜像 **13 ms**（60.3×）
+- 目录 6,896 条（npm 载体 `2026.1026.10371`，2026-10-27），406 组同名；**64 组**“按星数/第一个命中”会装到另一条来源
+- 8 个真实包里 **2 个 `latest` 与宿主不兼容**（宿主 0.2.0-rc.2；0.2.1-rc.2 上为 1/8）；朴素 peer 判断会把 **4/8** 误判成“装不了”
+- 同一份 registry 元数据：**约 5–60×**（2026-10-27 实测 12.2–37.4×，2026-10-18 为 60.3×）
 - GitHub-only 仓库入口探针 **404**（只有源码，没有构建产物）
 - 模拟“安装器报成功但进程里没有 entry”：无校验会**把静默失败报成成功**
-- 逻辑热加载 **3 ms** vs 重启 **30–40 s**
+- 逻辑热加载 **2–5 ms** vs 重启 **30–40 s**
 
-完整方法与口径见 [BENCHMARK.md](BENCHMARK.md) 与 [ABLATION.md](ABLATION.md)。数字只覆盖判断、试错与验证；**下载和编译的物理时间压不掉**。
+完整方法与口径见 [BENCHMARK.md](https://github.com/sakikoTGW/dsh-plugin-resolver/blob/main/BENCHMARK.md) 与 [ABLATION.md](https://github.com/sakikoTGW/dsh-plugin-resolver/blob/main/ABLATION.md)。数字只覆盖判断、试错与验证；**下载和编译的物理时间压不掉**。
 
 ## 市场收录
 
 <p align="center">
-  <img src="assets/market-dsh-market.png" alt="DSH 设置 → 插件市场 → 发现，搜索 plugin-resolve 显示 dsh-plugin-resolver 已安装" width="1180">
+  <img src="https://raw.githubusercontent.com/sakikoTGW/dsh-plugin-resolver/main/assets/market-dsh-market.png" alt="DSH 设置 → 插件市场 → 发现，搜索 plugin-resolve 显示 dsh-plugin-resolver 已安装" width="1180">
 </p>
-<p align="center"><sub>DSH 设置 → 插件市场 → 发现（搜索 <code>plugin-resolve</code>，2026-10-27 截图）：已安装 <code>v0.1.2</code>。</sub></p>
+<p align="center"><sub>DSH 设置 → 插件市场 → 发现（搜索 <code>plugin-resolve</code>，2026-10-27 截图）：截图时为 <code>v0.1.2</code>。</sub></p>
 
 <p align="center">
-  <img src="assets/market-dsh-gui.png" alt="DSH → 插件 → 发现：自定义索引源里的 dsh-plugin-resolver 卡片" width="1420">
+  <img src="https://raw.githubusercontent.com/sakikoTGW/dsh-plugin-resolver/main/assets/market-dsh-gui.png" alt="DSH → 插件 → 发现：自定义索引源里的 dsh-plugin-resolver 卡片" width="1420">
 </p>
 <p align="center"><sub>DSH 桌面版 → 插件 → 发现（已添加本仓库索引源）里的样子（2026-10-27 截图）。</sub></p>
 
 <p align="center">
-  <a href="https://www.dsh.so/zh/artifact/dsh-plugin-resolver/"><img src="assets/market-dsso.png" alt="dsh.so 收录页：L5 运行已验证、低风险、MIT" width="1214"></a>
+  <a href="https://www.dsh.so/zh/artifact/dsh-plugin-resolver/"><img src="https://raw.githubusercontent.com/sakikoTGW/dsh-plugin-resolver/main/assets/market-dsso.png" alt="dsh.so 收录页：L5 运行已验证、低风险、MIT" width="1214"></a>
 </p>
 <p align="center"><sub><a href="https://www.dsh.so/zh/artifact/dsh-plugin-resolver/">dsh.so</a> 收录页（2026-10-27 截图）：L5 运行已验证 · 低风险 · MIT。</sub></p>
 
 <p align="center">
-  <a href="https://dshbase.com/plugins/dsh-plugin-resolver/"><img src="assets/market-dshbase.png" alt="dshbase 收录页：Verified · install-tested on dsh · Actively maintained" width="1165"></a>
+  <a href="https://dshbase.com/plugins/dsh-plugin-resolver/"><img src="https://raw.githubusercontent.com/sakikoTGW/dsh-plugin-resolver/main/assets/market-dshbase.png" alt="dshbase 收录页：Verified · install-tested on dsh · Actively maintained" width="1165"></a>
 </p>
 <p align="center"><sub><a href="https://dshbase.com/plugins/dsh-plugin-resolver/">dshbase</a> 收录页（2026-10-27 截图）：Verified · install-tested on dsh · Actively maintained。</sub></p>
 
-收录状态与提交记录维护在 [PUBLISHING.md](PUBLISHING.md)。
+收录状态与提交记录维护在 [PUBLISHING.md](https://github.com/sakikoTGW/dsh-plugin-resolver/blob/main/PUBLISHING.md)。
 
 ## 测试与 CI
 
 ```sh
-npm test        # 29 条离线逻辑检查 + 10 条宿主无关 harness = 39 项
+npm test        # 35 条离线逻辑检查 + 10 条宿主无关 harness = 45 项
 npm run bench   # 插件路径基准（真实目录 + registry）
 npm run ablate  # 消融测试（无副作用）
 ```
@@ -260,22 +260,22 @@ npm run ablate  # 消融测试（无副作用）
 
 ## 已知限制
 
-- 兼容性以 npm 元数据里的 peer / `engines.dsh` 为准，宿主启动预检另有判断时以宿主为准；
+- 兼容性判定对齐宿主 `dsh-app-boot` 的预检规则：声明了 `engines.dsh` 只看它，否则所有 `@deepseek-ai/dsh*` peer 都算（含 optional；`workspace:^|~|*` 视作当前宿主）；宿主精确版本豁免（`allow-version`）仍然优先；
 - **替换已加载插件**仍需要重启宿主（loader 模块缓存 + 打包宿主无 Node 内部 loader）；**新增 bundle** 只看管理器的应用结果：管理器就地应用（HMR 重组合）时不再报 `restart-required`，只有它自己要求重启时才报；带 client 半的新插件会额外提示刷新 GUI；
 - 同名歧义不猜，需要调用方给 `owner=` 或完整 spec；
 - 目录是社区维护的第三方列表，插件只保证“按声明来源装对版本”，不做安全审计；
-- GitHub 源码构建依赖宿主环境里的 `pnpm`（PATH 或 `DSH_PNPM_PATH`）与 `tar`，大仓库首次构建较慢。
+- GitHub 源码构建需要 `pnpm` 与 `tar`：先找 `DSH_PNPM_PATH`（本插件约定，不是宿主契约），再找 PATH；宿主自带的 pnpm 未导出到 PATH，没有全局 pnpm 的机器需要先安装 pnpm。大仓库首次构建较慢。
 
 ## 反馈与安全
 
 - 一般问题、功能建议：<https://github.com/sakikoTGW/dsh-plugin-resolver/issues>
 - 安全问题：请走 **Security → Advisories → Report a vulnerability**（私密报告，不要开公开 Issue）
-- 发布流程与清单：见 [PUBLISHING.md](PUBLISHING.md)
+- 发布流程与清单：见 [PUBLISHING.md](https://github.com/sakikoTGW/dsh-plugin-resolver/blob/main/PUBLISHING.md)
 
 ## License
 
-[MIT](LICENSE)
+[MIT](https://github.com/sakikoTGW/dsh-plugin-resolver/blob/main/LICENSE)
 
 <p align="center">
-  <sub>Built for <a href="https://github.com/deepseek-ai/deepseek-harness">DeepSeek Harness</a> · 属于 <a href="https://github.com/sakikoTGW/dsh-plugins">dsh-plugins</a> 插件集 · 图标与横幅源码在 <a href="assets/">assets/</a> · <a href="#dsh-plugin-resolver">回到顶部 ↑</a></sub>
+  <sub>Built for <a href="https://github.com/deepseek-ai/deepseek-harness">DeepSeek Harness</a> · 属于 <a href="https://github.com/sakikoTGW/dsh-plugins">dsh-plugins</a> 插件集 · 图标与横幅源码在 <a href="https://github.com/sakikoTGW/dsh-plugin-resolver/tree/main/assets">assets/</a> · <a href="#dsh-plugin-resolver">回到顶部 ↑</a></sub>
 </p>

@@ -9,7 +9,7 @@
 <p align="center">
   <a href="https://www.npmjs.com/package/dsh-plugin-resolver"><img alt="npm" src="https://img.shields.io/npm/v/dsh-plugin-resolver?style=flat-square&color=4D6BFE&logo=npm&logoColor=white"></a>
   <a href="https://github.com/sakikoTGW/dsh-plugin-resolver/actions/workflows/test.yml"><img alt="test" src="https://img.shields.io/github/actions/workflow/status/sakikoTGW/dsh-plugin-resolver/test.yml?style=flat-square&label=test&color=2FBF71"></a>
-  <img alt="39 checks" src="https://img.shields.io/badge/checks-39%20passing-2FBF71?style=flat-square">
+  <img alt="45 checks" src="https://img.shields.io/badge/checks-45%20passing-2FBF71?style=flat-square">
   <a href="LICENSE"><img alt="MIT" src="https://img.shields.io/badge/license-MIT-263146?style=flat-square"></a>
   <img alt="DSH" src="https://img.shields.io/badge/DSH-0.2.0--rc.2%2B-4D6BFE?style=flat-square">
   <img alt="Node" src="https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white">
@@ -26,9 +26,9 @@
 > host-only plugin · 4 tools · pure ESM, no build step · DSH `>=0.2.0-rc.2 <0.3.0` · Node `>=20`
 
 <p align="center">
-  <img src="assets/demo.gif" alt="Terminal running npm test: 29 logic checks and 10 host-free harness checks pass" width="760">
+  <img src="assets/demo.gif" alt="Terminal running npm test (recorded 2026-10-27 at 39 checks)" width="760">
 </p>
-<p align="center"><sub>Real output: all 39 checks from <code>npm test</code> pass (<a href="demo/demo.tape">VHS tape</a> to re-record)</sub></p>
+<p align="center"><sub>Real output: 39 checks when recorded (2026-10-27); the current <code>npm test</code> is 45 (35 logic + 10 harness) and passes (<a href="demo/demo.tape">VHS tape</a> to re-record)</sub></p>
 
 ## Contents
 
@@ -48,12 +48,12 @@
 
 ## Why
 
-Installing two real plugins on one DSH install: `dsh-better-sidebar` (npm's `latest` is not guaranteed to accept the running core) and `dsh-browser` (six same-name owners, GitHub-only, needs a local build). When the install is delegated to an agent, the manual path looks like this:
+Installing two real plugins on one DSH install: `dsh-better-sidebar` (npm's `latest` is not guaranteed to accept the running core) and `dsh-browser` (nine same-name owners, GitHub-only, needs a local build). When the install is delegated to an agent, the manual path looks like this:
 
 | What happens on the manual path | Cost (measured on a real machine) |
 |---|---|
-| Pull the community catalog from GitHub Pages (6.4 MB) | **91 s**, and the model still has to read it |
-| 287 same-name groups; `dsh-browser` alone has 6 owners | Guesswork; in **51 groups** the highest-star entry is GitHub-only while the same name also exists on npm |
+| Pull the community catalog from GitHub Pages (8.78 MB on 2026-10-27; 6.4 MB in the 2026-10-18 run) | **91 s** in the 2026-10-18 run, and the model still has to read it |
+| 406 same-name groups; `dsh-browser` alone has 9 owners | Guesswork; in **64 groups** the highest-star entry is GitHub-only while the same name also exists on npm |
 | `latest` may not accept the running core (peer line or `engines.dsh` above the host) | The host's startup precheck **silently disables** it |
 | Direct npmjs is slow | Two **90 s timeouts**; 13.4 s with a mirror |
 | GitHub-only repos ship no build output | `main` points at a missing file — it installs and **never loads** |
@@ -86,7 +86,7 @@ https://sakikoTGW.github.io/dsh-plugin-resolver/market/index.json
 
 Then install `dsh-plugin-resolver`.
 
-### npm (published as `0.1.2`)
+### npm (published as `0.1.3`)
 
 ```sh
 dsh plugin --profile <profile> add dsh-plugin-resolver
@@ -99,13 +99,13 @@ dsh plugin --profile <profile> add dsh-plugin-resolver
 dsh plugin --profile <profile> add github:sakikoTGW/dsh-plugin-resolver#<commit>
 
 # or pack locally
-npm pack && dsh plugin --profile <profile> add ./dsh-plugin-resolver-0.1.2.tgz
+npm pack && dsh plugin --profile <profile> add ./dsh-plugin-resolver-0.1.3.tgz
 ```
 
 Restart the host once. After that:
 
 ```text
-"install dsh-browser"         → 6 same-name candidates, asks for owner=, never guesses
+"install dsh-browser"         → 9 same-name candidates, asks for owner=, never guesses
 "install dsh-builtin-browser" → picks the version compatible with the running core
 "install dsh-better-sidebar"  → latest is incompatible: degrades automatically and lists skipped versions
 ```
@@ -113,18 +113,18 @@ Restart the host once. After that:
 <p align="center">
   <img src="assets/demo-resolve.gif" alt="A real plugin_resolve call: resolving a compatible version from the catalog and registry" width="760">
 </p>
-<p align="center"><sub>Real call captured from a local harness (host 0.2.0-rc.2): one compatible version resolved from the real catalog and registry.</sub></p>
+<p align="center"><sub>Real call captured from a local harness (recorded 2026-10-18, host 0.2.0-rc.2): one compatible version resolved from the real catalog and registry.</sub></p>
 
-A real call looks like this (host 0.2.0-rc.2):
+A real call looks like this (host 0.2.1-rc.2):
 
 ```text
 $ plugin_resolve dsh-builtin-browser
-target kind: npm   running DSH: 0.2.0-rc.2
+target kind: npm   running DSH: 0.2.1-rc.2
 package: dsh-builtin-browser@0.4.15
 install spec: dsh-builtin-browser@0.4.15
-registry: https://registry.npmmirror.com/
+registry: https://registry.npmmirror.com
 notes:
-- newest of 41 published versions whose DSH peer range accepts 0.2.0-rc.2
+- newest of 41 published versions whose DSH constraint accepts 0.2.1-rc.2
 ```
 
 An install call also carries verification and the restart decision:
@@ -132,8 +132,8 @@ An install call also carries verification and the restart decision:
 ```text
 $ plugin_install dsh-better-sidebar
 target kind: npm   running DSH: 0.2.1-rc.2
-package: dsh-better-sidebar@0.28.0
-install spec: dsh-better-sidebar@0.28.0
+package: dsh-better-sidebar@0.28.1
+install spec: dsh-better-sidebar@0.28.1
 ...
 restart: not required — manager applied the change in place
 ```
@@ -148,7 +148,7 @@ restart: not required — manager applied the change in place
 | <img src="assets/icons/status.svg" width="18" alt=""> `plugin_status` | Inventory installed bundles, loader entries and fiber phase | read-only |
 
 <p align="center">
-  <img src="assets/tool-search.png" alt="Real plugin_search output: six same-name dsh-browser candidates, asks for owner=" width="980">
+  <img src="assets/tool-search.png" alt="Real plugin_search output: nine same-name dsh-browser candidates, asks for owner=" width="980">
 </p>
 <p align="center"><sub>Real output (local harness, 2026-10-27): same-name ambiguity is never guessed — owner, stars, npm name and install command stay visible.</sub></p>
 
@@ -160,8 +160,8 @@ restart: not required — manager applied the change in place
 ## Version selection
 
 1. The **running version** is the version of `@deepseek-ai/dsh-base` inside `pluginManager.listBundles()`;
-2. Walk versions from newest to oldest: non-optional **`@deepseek-ai/dsh*`** peers must accept the running version, and a declared **`engines.dsh`** must accept it too;
-3. Libraries in the same namespace but on a different version line — `@deepseek-ai/cordis`, `@deepseek-ai/schemastery` — are **not** runtime constraints. Treating them as constraints once misjudged 4/8 packages as "no compatible version" (see [ABLATION](ABLATION.md));
+2. A declared **`engines.dsh`** decides alone — the host `dsh-app-boot` precheck ignores peers for that version;
+3. Without `engines.dsh`, every **`@deepseek-ai/dsh`** / **`@deepseek-ai/dsh-*`** peer must accept the running version (**optional peers included**; `workspace:^`, `workspace:~`, `workspace:*` mean the running host); libraries in the same namespace but on a different version line — `@deepseek-ai/cordis`, `@deepseek-ai/schemastery` — are **not** runtime constraints. Treating those as constraints once misjudged 4/8 packages as "no compatible version" (see [ABLATION](ABLATION.md));
 4. Take the first version that passes; if none pass, list the rejection reasons of the closest versions. An explicit `version` skips resolution.
 
 ## Install paths and restarts
@@ -187,7 +187,7 @@ restart: not required — manager applied the change in place
 
 On every call, `host/register.js` computes the newest mtime under `logic/` and imports `./logic/api.js?v=<mtime>`; logic modules pass the same `?v=` to each other. Node caches ES modules by full URL, so:
 
-- editing anything under `logic/` takes effect on the **next tool call** without a host restart (measured 3 ms; a restart costs 30–40 s)
+- editing anything under `logic/` takes effect on the **next tool call** without a host restart (measured 2–5 ms; a restart costs 30–40 s)
 - only changes to the tool-definition layer (`index.js` / `host/register.js`) need a restart
 
 This is designed for a packaged runtime without HMR: the host cannot reach the Node-internal module loader that real HMR needs, but re-importing a module with a fresh query string works fine.
@@ -203,19 +203,19 @@ This is designed for a packaged runtime without HMR: the host cannot reach the N
 |---|---|---|---|
 | Tool calls (1 ambiguous + 1 GitHub-only) | ~45 | **~6** | [BENCHMARK](BENCHMARK.md) |
 | End-to-end time | 20–25 min | **~3 min** (including unavoidable install/build) | [BENCHMARK](BENCHMARK.md) |
-| Decision chain | Re-derived every time | **1.23 s (9 calls)** | [BENCHMARK](BENCHMARK.md) |
-| Catalog fetch | 91.06 s / 6.4 MB | **0.94 s / 2 requests** | [BENCHMARK](BENCHMARK.md) |
+| Decision chain | Re-derived every time | **~1.9 s (9 calls, 2026-10-27)** | [BENCHMARK](BENCHMARK.md) |
+| Catalog fetch | 91.06 s (2026-10-18) / 8.78 MB (2026-10-27) | **1.5 s / 2 requests (2026-10-27)** | [BENCHMARK](BENCHMARK.md) |
 | Install retries | two 90 s timeouts | **0** | session log |
 | Post-install probes | 2 | **0** | [BENCHMARK](BENCHMARK.md) |
 
 The ablation removes each capability in turn; the failure mode is not "slower" but **wrong version / wrong source / installed but never loads / silent failure**:
 
-- 5,065 catalog entries, 287 same-name groups; in **51 groups** "first hit / highest stars" installs a different source
-- In 8 real packages, **2 `latest` releases reject the host**; naive peer handling misjudges **4/8** as "not installable"
-- Same registry metadata: npmjs **784 ms** vs mirror **13 ms** (60.3×)
+- 6,896 catalog entries (npm carrier `2026.1026.10371`, 2026-10-27), 406 same-name groups; in **64 groups** "first hit / highest stars" installs a different source
+- In 8 real packages, **2 `latest` releases reject the host** (on 0.2.0-rc.2; 1/8 on 0.2.1-rc.2); naive peer handling misjudges **4/8** as "not installable"
+- Same registry metadata: **~5–60×** (12.2–37.4× on 2026-10-27; 60.3× on 2026-10-18)
 - GitHub-only repo entry probe: **404** (source only, no build output)
 - Simulated "installer says applied, but no entry in the process": without verification, a **silent failure is reported as success**
-- Logic hot reload **3 ms** vs restart **30–40 s**
+- Logic hot reload **2–5 ms** vs restart **30–40 s**
 
 Full method and caveats: [BENCHMARK.md](BENCHMARK.md) and [ABLATION.md](ABLATION.md). The numbers cover decisions, trial and error, and verification; **download and compile time cannot be compressed away**.
 
@@ -224,7 +224,7 @@ Full method and caveats: [BENCHMARK.md](BENCHMARK.md) and [ABLATION.md](ABLATION
 <p align="center">
   <img src="assets/market-dsh-market.png" alt="DSH Settings → Plugin market → Discover, searching plugin-resolve shows dsh-plugin-resolver installed" width="1180">
 </p>
-<p align="center"><sub>DSH Settings → Plugin market → Discover (search <code>plugin-resolve</code>, screenshot 2026-10-27): installed <code>v0.1.2</code>.</sub></p>
+<p align="center"><sub>DSH Settings → Plugin market → Discover (search <code>plugin-resolve</code>, screenshot 2026-10-27): <code>v0.1.2</code> installed at the time.</sub></p>
 
 <p align="center">
   <img src="assets/market-dsh-gui.png" alt="DSH → Plugins → Discover: the dsh-plugin-resolver card from a custom index source" width="1420">
@@ -246,7 +246,7 @@ Submission status and history live in [PUBLISHING.md](PUBLISHING.md).
 ## Tests and CI
 
 ```sh
-npm test        # 29 offline logic checks + 10 host-free harness checks = 39
+npm test        # 35 offline logic checks + 10 host-free harness checks = 45
 npm run bench   # plugin-path benchmark (real catalog + registry)
 npm run ablate  # ablation (no side effects)
 ```
@@ -260,11 +260,11 @@ npm run ablate  # ablation (no side effects)
 
 ## Known limitations
 
-- Compatibility follows npm metadata (`peer` / `engines.dsh`); if the host's startup precheck disagrees, the host wins;
-- **Replacing an already-loaded plugin** still needs a host restart (loader module cache + packaged host without the Node-internal loader); `plugin_install` reports `restart-required` only when the bundle set or runtime files actually changed;
+- Compatibility follows the host's own precheck (`dsh-app-boot`): a declared `engines.dsh` decides alone, otherwise every `@deepseek-ai/dsh` / `@deepseek-ai/dsh-*` peer counts (optional ones included; `workspace:^|~|*` means the running host); exact-version host exemptions (`allow-version`) still win;
+- **Replacing an already-loaded plugin** still needs a host restart (loader module cache + packaged host without the Node-internal loader); **new bundles** follow the manager's application result — an in-place (HMR recomposition) apply no longer reports `restart-required`, only a manager-requested restart does; a new plugin with a client half adds a "refresh the GUI" hint;
 - Same-name ambiguity is never guessed: pass `owner=` or a full spec;
 - The catalog is a community-maintained third-party list; the plugin only guarantees "installed from the declared source at a compatible version", not a security audit;
-- GitHub source builds need `pnpm` (PATH or `DSH_PNPM_PATH`) and `tar` on the host; the first build of a large repo is slow.
+- GitHub source builds need `pnpm` and `tar`: `DSH_PNPM_PATH` (a resolver convention, not a host contract) first, then PATH; the host's bundled pnpm is not exported to PATH, so a machine without a global pnpm must install one. The first build of a large repo is slow.
 
 ## Feedback and security
 

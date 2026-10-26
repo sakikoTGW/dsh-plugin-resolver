@@ -13,7 +13,7 @@ README 用的视觉资产，全部是矢量或可重生成文件，随仓库一�
 | `architecture.svg` | 稳定壳 + 热加载逻辑的两层结构 | README「结构」 |
 | `benchmark.svg` | 手工路径 vs 插件的四组基准条形图 | README「效果与证据」 |
 | `flow.png` / `architecture.png` / `benchmark.png` | 上面三张图的 1:1 PNG 渲染 | 发布帖 / 不支持 SVG 的平台 |
-| `demo.gif` | 真实 `npm test` 输出（34 项检查）的终端演示 | README 首屏 |
+| `demo.gif` | 真实 `npm test` 输出的终端演示（录制时 39 项；当前 45 项 = 35 逻辑 + 10 harness） | README 首屏 |
 | `demo-resolve.gif` | 真实 `plugin_resolve` 调用的终端演示 | README「快速开始」 |
 | `tool-search.png` / `tool-resolve.png` | 真实工具输出截屏（本地 harness 捕获） | README「四个工具」 |
 | `market-dsso.png` / `market-dshbase.png` | dsh.so 与 dshbase 收录页截屏（2026-10-27） | README「市场收录」 |
