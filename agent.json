@@ -1,0 +1,64 @@
+{
+  "schema": "dsh-plugin-resolver/agent-contract/v1",
+  "name": "dsh-plugin-resolver",
+  "version": "0.1.3",
+  "purpose": "Install the right DSH plugin in one call: search the catalog, disambiguate same-name entries, pick a version the running DSH accepts, install from registry or GitHub source, and verify the mount.",
+  "host": "DSH >=0.2.0-rc.2 <0.3.0 · Node >=20",
+  "install": {
+    "market": {
+      "indexSource": "https://sakikoTGW.github.io/dsh-plugin-resolver/market/index.json",
+      "steps": ["Plugins", "Discover", "Add index source", "Install dsh-plugin-resolver"]
+    },
+    "npm": {
+      "command": "dsh plugin --profile <profile> add dsh-plugin-resolver"
+    }
+  },
+  "tools": [
+    {
+      "name": "plugin_search",
+      "readOnly": true,
+      "input": "query",
+      "output": "catalog candidates with owner, stars, npm name, install command, ambiguity flag"
+    },
+    {
+      "name": "plugin_resolve",
+      "readOnly": true,
+      "input": "target",
+      "output": "package, install spec, registry, source-build requirement, notes"
+    },
+    {
+      "name": "plugin_install",
+      "readOnly": false,
+      "writes": ["profile", "lockfile", "plugin-sources"],
+      "input": "target",
+      "output": "applied state, bundle and loader entry, restart decision, next step"
+    },
+    {
+      "name": "plugin_status",
+      "readOnly": true,
+      "output": "installed bundles, loader entries, fiberPhase"
+    }
+  ],
+  "versionRule": {
+    "runtime": "version of @deepseek-ai/dsh-base in pluginManager.listBundles()",
+    "enginesDsh": "authoritative when present",
+    "peer": "every same-namespace @deepseek-ai/dsh / @deepseek-ai/dsh-* peer accepts the running version; sibling libraries on other version lines are excluded from runtime constraints",
+    "selection": "first compatible version; explicit version skips resolution"
+  },
+  "ambiguity": "keep every candidate visible; the caller supplies owner= or a full spec",
+  "restart": "compare bundle set and runtime file hashes; the plugin manager result is authoritative",
+  "validation": {
+    "command": "npm test",
+    "expected": "45 passing: 35 logic + 10 harness",
+    "benchmark": "BENCHMARK.md",
+    "ablation": "ABLATION.md",
+    "ci": "https://github.com/sakikoTGW/dsh-plugin-resolver/actions/workflows/test.yml"
+  },
+  "ecosystem": {
+    "hub": "https://github.com/sakikoTGW/dsh-plugins",
+    "dshSo": "https://www.dsh.so/zh/artifact/dsh-plugin-resolver/",
+    "dshbase": "https://dshbase.com/plugins/dsh-plugin-resolver/",
+    "dshmarket": "https://dshmarket.com",
+    "marketIndex": "https://sakikoTGW.github.io/dsh-plugin-resolver/market/index.json"
+  }
+}
