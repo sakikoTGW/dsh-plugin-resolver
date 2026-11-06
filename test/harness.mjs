@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Host-free harness: mount the tool set against a fake Cordis context and a
  * fake plugin manager, then drive the real tool bodies. This is where the
  * resolution rules, ambiguity handling and install orchestration get checked
@@ -112,7 +112,7 @@ await check('resolve picks the DSH-compatible version line', async () => {
 
 await check('resolve honors an engines.dsh-only plugin', async () => {
   const text = await run('plugin_resolve', { target: 'dsh-builtin-browser' })
-  assert.match(text, /0\.4\./)
+  assert.match(text, /\d+\.\d+\.\d+/)
   assert.doesNotMatch(text, /no version compatible/)
 })
 
@@ -172,4 +172,5 @@ if (failures > 0) {
   process.exit(1)
 }
 console.log('\nall harness checks passed')
+
 

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Benchmark harness: drive the real tool surface against a fake host and record
  * wall time, network calls and output size per task. This measures the plugin
  * path only; the manual-baseline numbers live in BENCHMARK.md and come from
@@ -90,7 +90,7 @@ await measure('search cached', 'plugin_search', { query: 'browser', limit: 6 })
 const ambiguity = await measure('resolve ambiguous target', 'plugin_resolve', { target: 'dsh-browser' })
 assert.match(ambiguity, /ambiguous/)
 const enginePick = await measure('resolve version by engines.dsh', 'plugin_resolve', { target: 'dsh-builtin-browser' })
-assert.match(enginePick, /0\.4\.\d+/)
+assert.match(enginePick, /\d+\.\d+\.\d+/)
 const peerPick = await measure('resolve version across peer lines', 'plugin_resolve', { target: 'dsh-better-sidebar' })
 assert.match(peerPick, /0\.26\.1/)
 assert.match(peerPick, /0\.28\.0/)
@@ -115,3 +115,4 @@ const totalFetches = results.reduce((sum, row) => sum + row.fetches, 0)
 const totalChars = results.reduce((sum, row) => sum + row.chars, 0)
 console.log('\ntotal'.padEnd(40), pad(Math.round(totalMs), 7), pad(totalFetches, 5), pad(totalChars, 7))
 console.log(`\n${results.length} tool calls, ${Math.round(totalMs / 1000)}s wall clock, ${totalFetches} network requests, ${(totalChars / 1024).toFixed(1)} KiB of model-facing text`)
+

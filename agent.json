@@ -1,13 +1,18 @@
 {
   "schema": "dsh-plugin-resolver/agent-contract/v1",
   "name": "dsh-plugin-resolver",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "purpose": "Install the right DSH plugin in one call: search the catalog, disambiguate same-name entries, pick a version the running DSH accepts, install from registry or GitHub source, and verify the mount.",
   "host": "DSH >=0.2.0-rc.2 <0.3.0 · Node >=20",
   "install": {
     "market": {
       "indexSource": "https://sakikoTGW.github.io/dsh-plugin-resolver/market/index.json",
-      "steps": ["Plugins", "Discover", "Add index source", "Install dsh-plugin-resolver"]
+      "steps": [
+        "Plugins",
+        "Discover",
+        "Add index source",
+        "Install dsh-plugin-resolver"
+      ]
     },
     "npm": {
       "command": "dsh plugin --profile <profile> add dsh-plugin-resolver"
@@ -29,7 +34,11 @@
     {
       "name": "plugin_install",
       "readOnly": false,
-      "writes": ["profile", "lockfile", "plugin-sources"],
+      "writes": [
+        "profile",
+        "lockfile",
+        "plugin-sources"
+      ],
       "input": "target",
       "output": "applied state, bundle and loader entry, restart decision, next step"
     },
