@@ -1,0 +1,15 @@
+<!doctype html><html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>测试与 CI · resolver reference</title><link rel="stylesheet" href="style.css"></head><body><div class="wrap">
+<nav><div class="brand"><span style="color:var(--ink);width:30px;height:30px;display:inline-block"><svg viewBox="0 0 160 160" aria-hidden="true"><mask id="m"><rect width="160" height="160" fill="white"/><circle cx="29.8" cy="51" r="7.5" fill="black"/><circle cx="22" cy="80" r="7.5" fill="black"/><circle cx="29.8" cy="109" r="7.5" fill="black"/></mask><g mask="url(#m)"><circle cx="80" cy="80" r="58" fill="none" stroke="currentColor" stroke-width="9"/><path d="M53 84 L77 108 L115 57" fill="none" stroke="currentColor" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/></g></svg></span><a href="index.html">resolver</a></div><div class="kicker">REFERENCE</div><a class="item" href="index.html">总览</a><a class="item" href="TOOLS.html">四个工具</a><a class="item" href="VERSION-SELECTION.html">版本选择规则</a><a class="item" href="INSTALL-PATHS.html">安装路径与重启判定</a><a class="item" href="ARCHITECTURE.html">结构</a><a class="item" href="EVIDENCE.html">效果与证据</a><a class="item on" href="TESTING.html">测试与 CI</a><a class="item" href="LIMITATIONS.html">已知限制</a><a class="item" href="SECURITY.html">反馈与安全</a><div class="agents"><b>Agent?</b><a href="https://sakikoTGW.github.io/dsh-plugin-resolver/llms.txt">llms.txt</a><a href="https://sakikoTGW.github.io/dsh-plugin-resolver/agent.json">agent.json</a><a href="https://github.com/sakikoTGW/dsh-plugin-resolver">GitHub</a></div></nav>
+<main><div class="agentbar"><b>Agent:</b> start with <a href="https://sakikoTGW.github.io/dsh-plugin-resolver/llms.txt">llms.txt</a>, full contract in <a href="https://sakikoTGW.github.io/dsh-plugin-resolver/agent.json">agent.json</a>. This page is the human reference.</div><h1>测试与 CI</h1>
+<pre><code class="language-sh">npm test        # 35 条离线逻辑检查 + 10 条宿主无关 harness = 45 项
+npm run bench   # 插件路径基准（真实目录 + registry）
+npm run ablate  # 消融测试（无副作用）
+</code></pre>
+<ul>
+<li><code>test/selftest.mjs</code>：semver 子集、版本选择、spec 解析、目录检索（离线）。</li>
+<li><code>test/harness.mjs</code>：假 Cordis ctx + 假 pluginManager 驱动真实工具体。</li>
+<li><code>test/benchmark.mjs</code> / <code>test/ablation.mjs</code>：真实目录 + 真实 registry 的测量脚本。</li>
+<li>CI：每次 push/PR 跑 <code>test</code>（Node 24）；<code>ablation</code> 走手动或每周定时任务。</li>
+</ul>
+<p>沙箱或 CI 里默认缓存目录不可写时，用 <code>DSH_HOME</code> 指到临时目录：<code>DSH_HOME=/tmp/dsh npm test</code>。</p>
+<footer>MIT · <a href="https://github.com/sakikoTGW/dsh-plugin-resolver">sakikoTGW/dsh-plugin-resolver</a> · <a href="index.html">reference</a></footer></main></div></body></html>

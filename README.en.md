@@ -124,6 +124,8 @@ The full contract is in [`agent.json`](agent.json), and the agent index is [`llm
 
 ## Reference
 
+Web version: [sakikoTGW.github.io/dsh-plugin-resolver/docs/](https://sakikoTGW.github.io/dsh-plugin-resolver/docs/)
+
 | Topic | Where |
 |---|---|
 | Four tools | [docs/TOOLS.md](docs/TOOLS.md) |

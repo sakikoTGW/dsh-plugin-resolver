@@ -1,0 +1,37 @@
+:root{--paper:#f2efe6;--ink:#0b0c12;--muted:#5b564c;--soft:#8b8578;--blue:#4d6bfe;--line:#d8d2c4;--code:#14161f}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.7 "Segoe UI","Microsoft YaHei",Arial,sans-serif}
+a{color:var(--blue);text-decoration:none} a:hover{text-decoration:underline}
+.wrap{display:grid;grid-template-columns:260px minmax(0,860px);gap:64px;max-width:1240px;margin:0 auto;padding:48px 32px 96px}
+nav{position:sticky;top:40px;align-self:start}
+nav .brand{display:flex;align-items:center;gap:10px;margin-bottom:28px;font-weight:700;font-size:20px;letter-spacing:-.5px}
+nav .brand a{color:var(--ink)}
+nav .brand svg{width:30px;height:30px}
+nav .kicker{font-size:11px;letter-spacing:4px;color:var(--soft);margin-bottom:10px}
+nav a.item{display:block;padding:5px 0;color:var(--muted);font-size:14px}
+nav a.item.on{color:var(--ink);font-weight:600}
+nav .agents{margin-top:28px;padding-top:18px;border-top:1px solid var(--line);font-size:12px;color:var(--soft);line-height:1.8}
+nav .agents a{display:block}
+main{min-width:0}
+h1{font-size:44px;line-height:1.1;letter-spacing:-1.8px;margin:0 0 12px;font-weight:700}
+h2{font-size:24px;margin:40px 0 10px;letter-spacing:-.6px}
+h3{font-size:18px;margin:28px 0 8px}
+p,li{color:#2f2b26}
+.lede{font-size:18px;color:var(--muted);margin:0 0 28px;max-width:640px}
+.agentbar{border:1px solid var(--line);border-radius:12px;padding:14px 18px;font-size:13px;color:var(--muted);margin:0 0 34px;background:#faf8f2}
+.agentbar b{color:var(--ink)}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:14px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--soft);font-weight:600;font-size:12px;letter-spacing:.5px}
+code{background:#e8e3d6;padding:1px 5px;border-radius:4px;font-size:.9em}
+pre{background:var(--code);color:#e7e3d8;padding:16px 18px;border-radius:10px;overflow:auto;font-size:13px;line-height:1.55}
+pre code{background:none;padding:0;color:inherit}
+blockquote{margin:16px 0;padding:2px 0 2px 16px;border-left:3px solid var(--line);color:var(--muted)}
+img{max-width:100%}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:22px 0 8px}
+.card{display:block;border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:#faf8f2;color:var(--ink)}
+.card b{display:block;font-size:15px;margin-bottom:4px}
+.card span{font-size:13px;color:var(--muted)}
+.card:hover{border-color:var(--blue);text-decoration:none}
+footer{margin-top:60px;padding-top:18px;border-top:1px solid var(--line);font-size:12px;color:var(--soft)}
+@media(max-width:900px){.wrap{grid-template-columns:1fr;gap:28px}nav{position:static}.cards{grid-template-columns:1fr}}

@@ -124,6 +124,8 @@ npm test   # 45 passing: 35 logic + 10 harness
 
 ## 参考
 
+网页版：[sakikoTGW.github.io/dsh-plugin-resolver/docs/](https://sakikoTGW.github.io/dsh-plugin-resolver/docs/)
+
 | 内容 | 位置 |
 |---|---|
 | 四个工具 | [docs/TOOLS.md](docs/TOOLS.md) |

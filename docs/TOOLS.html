@@ -1,0 +1,34 @@
+<!doctype html><html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>四个工具 · resolver reference</title><link rel="stylesheet" href="style.css"></head><body><div class="wrap">
+<nav><div class="brand"><span style="color:var(--ink);width:30px;height:30px;display:inline-block"><svg viewBox="0 0 160 160" aria-hidden="true"><mask id="m"><rect width="160" height="160" fill="white"/><circle cx="29.8" cy="51" r="7.5" fill="black"/><circle cx="22" cy="80" r="7.5" fill="black"/><circle cx="29.8" cy="109" r="7.5" fill="black"/></mask><g mask="url(#m)"><circle cx="80" cy="80" r="58" fill="none" stroke="currentColor" stroke-width="9"/><path d="M53 84 L77 108 L115 57" fill="none" stroke="currentColor" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/></g></svg></span><a href="index.html">resolver</a></div><div class="kicker">REFERENCE</div><a class="item" href="index.html">总览</a><a class="item on" href="TOOLS.html">四个工具</a><a class="item" href="VERSION-SELECTION.html">版本选择规则</a><a class="item" href="INSTALL-PATHS.html">安装路径与重启判定</a><a class="item" href="ARCHITECTURE.html">结构</a><a class="item" href="EVIDENCE.html">效果与证据</a><a class="item" href="TESTING.html">测试与 CI</a><a class="item" href="LIMITATIONS.html">已知限制</a><a class="item" href="SECURITY.html">反馈与安全</a><div class="agents"><b>Agent?</b><a href="https://sakikoTGW.github.io/dsh-plugin-resolver/llms.txt">llms.txt</a><a href="https://sakikoTGW.github.io/dsh-plugin-resolver/agent.json">agent.json</a><a href="https://github.com/sakikoTGW/dsh-plugin-resolver">GitHub</a></div></nav>
+<main><div class="agentbar"><b>Agent:</b> start with <a href="https://sakikoTGW.github.io/dsh-plugin-resolver/llms.txt">llms.txt</a>, full contract in <a href="https://sakikoTGW.github.io/dsh-plugin-resolver/agent.json">agent.json</a>. This page is the human reference.</div><h1>四个工具</h1>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>作用</th>
+<th>是否改动环境</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>plugin_search</code></td>
+<td>搜社区目录，npm 载体优先，排序并标出同名歧义</td>
+<td>只读</td>
+</tr>
+<tr>
+<td><code>plugin_resolve</code></td>
+<td>只解析不装：目录条目、兼容版本、registry、是否需要源码构建</td>
+<td>只读</td>
+</tr>
+<tr>
+<td><code>plugin_install</code></td>
+<td>完整安装：选版本、安装或构建、回读校验、给下一步</td>
+<td>写 profile</td>
+</tr>
+<tr>
+<td><code>plugin_status</code></td>
+<td>已装 bundle、loader entry、fiberPhase 盘点</td>
+<td>只读</td>
+</tr>
+</tbody></table>
+<p>只有 <code>plugin_install</code> 会写环境。同名歧义会返回全部候选，由调用方给 <code>owner=</code> 或完整 spec。</p>
+<footer>MIT · <a href="https://github.com/sakikoTGW/dsh-plugin-resolver">sakikoTGW/dsh-plugin-resolver</a> · <a href="index.html">reference</a></footer></main></div></body></html>

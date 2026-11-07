@@ -1,0 +1,60 @@
+<!doctype html><html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>效果与证据 · resolver reference</title><link rel="stylesheet" href="style.css"></head><body><div class="wrap">
+<nav><div class="brand"><span style="color:var(--ink);width:30px;height:30px;display:inline-block"><svg viewBox="0 0 160 160" aria-hidden="true"><mask id="m"><rect width="160" height="160" fill="white"/><circle cx="29.8" cy="51" r="7.5" fill="black"/><circle cx="22" cy="80" r="7.5" fill="black"/><circle cx="29.8" cy="109" r="7.5" fill="black"/></mask><g mask="url(#m)"><circle cx="80" cy="80" r="58" fill="none" stroke="currentColor" stroke-width="9"/><path d="M53 84 L77 108 L115 57" fill="none" stroke="currentColor" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/></g></svg></span><a href="index.html">resolver</a></div><div class="kicker">REFERENCE</div><a class="item" href="index.html">总览</a><a class="item" href="TOOLS.html">四个工具</a><a class="item" href="VERSION-SELECTION.html">版本选择规则</a><a class="item" href="INSTALL-PATHS.html">安装路径与重启判定</a><a class="item" href="ARCHITECTURE.html">结构</a><a class="item on" href="EVIDENCE.html">效果与证据</a><a class="item" href="TESTING.html">测试与 CI</a><a class="item" href="LIMITATIONS.html">已知限制</a><a class="item" href="SECURITY.html">反馈与安全</a><div class="agents"><b>Agent?</b><a href="https://sakikoTGW.github.io/dsh-plugin-resolver/llms.txt">llms.txt</a><a href="https://sakikoTGW.github.io/dsh-plugin-resolver/agent.json">agent.json</a><a href="https://github.com/sakikoTGW/dsh-plugin-resolver">GitHub</a></div></nav>
+<main><div class="agentbar"><b>Agent:</b> start with <a href="https://sakikoTGW.github.io/dsh-plugin-resolver/llms.txt">llms.txt</a>, full contract in <a href="https://sakikoTGW.github.io/dsh-plugin-resolver/agent.json">agent.json</a>. This page is the human reference.</div><h1>效果与证据</h1>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>agent 手工路径</th>
+<th>本插件</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>工具调用（1 歧义 + 1 GitHub-only）</td>
+<td>≈ 45 次</td>
+<td>≈ 6 次</td>
+<td><a href="https://github.com/sakikoTGW/dsh-plugin-resolver/blob/main/BENCHMARK.md">BENCHMARK</a></td>
+</tr>
+<tr>
+<td>端到端耗时</td>
+<td>20–25 分钟</td>
+<td>约 3 分钟（含安装/编译）</td>
+<td><a href="https://github.com/sakikoTGW/dsh-plugin-resolver/blob/main/BENCHMARK.md">BENCHMARK</a></td>
+</tr>
+<tr>
+<td>决策链耗时</td>
+<td>每次重新推</td>
+<td>约 1.9 s（9 次调用，2026-10-27）</td>
+<td><a href="https://github.com/sakikoTGW/dsh-plugin-resolver/blob/main/BENCHMARK.md">BENCHMARK</a></td>
+</tr>
+<tr>
+<td>目录获取</td>
+<td>91.06 s（2026-10-18）/ 8.78 MB（2026-10-27）</td>
+<td>1.5 s / 2 个请求（2026-10-27）</td>
+<td><a href="https://github.com/sakikoTGW/dsh-plugin-resolver/blob/main/BENCHMARK.md">BENCHMARK</a></td>
+</tr>
+<tr>
+<td>安装失败重试</td>
+<td>2 次 90 s 超时</td>
+<td>0 次</td>
+<td>会话日志</td>
+</tr>
+<tr>
+<td>安装后额外探测</td>
+<td>2 次</td>
+<td>0 次</td>
+<td><a href="https://github.com/sakikoTGW/dsh-plugin-resolver/blob/main/BENCHMARK.md">BENCHMARK</a></td>
+</tr>
+</tbody></table>
+<p>消融逐项拆能力，结果不是“慢一点”，而是装错版本、装错来源、装完不加载、静默失败：</p>
+<ul>
+<li>目录 6,896 条（npm 载体 <code>2026.1026.10371</code>，2026-10-27），406 组同名；64 组“按星数/第一个命中”会装到另一条来源。</li>
+<li>8 个真实包里 2 个 <code>latest</code> 与宿主不兼容（宿主 0.2.0-rc.2；0.2.1-rc.2 上为 1/8）；朴素 peer 判断会把 4/8 误判成装不了。</li>
+<li>同一份 registry 元数据：约 5–60×（2026-10-27 实测 12.2–37.4×，2026-10-18 为 60.3×）。</li>
+<li>GitHub-only 仓库入口探针 404，只有源码，没有构建产物。</li>
+<li>模拟“安装器报成功但进程里没有 entry”：无校验会把静默失败报成成功。</li>
+<li>逻辑热加载 2–5 ms，重启 30–40 s。</li>
+</ul>
+<p>完整方法与口径见 <a href="https://github.com/sakikoTGW/dsh-plugin-resolver/blob/main/BENCHMARK.md">BENCHMARK</a> 与 <a href="https://github.com/sakikoTGW/dsh-plugin-resolver/blob/main/ABLATION.md">ABLATION</a>。数字覆盖判断、试错与验证；下载和编译的物理时间压不掉。</p>
+<footer>MIT · <a href="https://github.com/sakikoTGW/dsh-plugin-resolver">sakikoTGW/dsh-plugin-resolver</a> · <a href="index.html">reference</a></footer></main></div></body></html>
