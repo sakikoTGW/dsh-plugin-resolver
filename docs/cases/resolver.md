@@ -1,6 +1,7 @@
-# v0.1.6 — 从横幅到仓库：首屏、README、agent 层
+# 案例：resolver 从 v0.1.3 到 v0.1.6 — 从横幅到仓库
 
-Status: released (GitHub) / npm still 0.1.4
+类型：案例研究（不是 release note）
+Status: v0.1.6 released on GitHub / npm still 0.1.4
 Compare: https://github.com/sakikoTGW/dsh-plugin-resolver/compare/v0.1.3...v0.1.6
 
 ## 一句话
@@ -11,10 +12,10 @@ Compare: https://github.com/sakikoTGW/dsh-plugin-resolver/compare/v0.1.3...v0.1.
 
 | 改了什么 | 之前 | 之后 | 证据 |
 |---|---|---|---|
-| 首屏重做 | 渐变横幅、3 个数字胶囊、终端卡片 | 纸色海报、左大字、右真实 DSH 窗口、公共领域寄居蟹版画水印 | [before](https://raw.githubusercontent.com/sakikoTGW/dsh-plugin-resolver/main/docs/releases/v0.1.6/before-readme.png) / [after](https://raw.githubusercontent.com/sakikoTGW/dsh-plugin-resolver/main/docs/releases/v0.1.6/after-readme.png) |
+| 首屏重做 | 渐变横幅、3 个数字胶囊、终端卡片 | 纸色海报、左大字、右真实 DSH 窗口、公共领域寄居蟹版画水印 | [before](https://raw.githubusercontent.com/sakikoTGW/dsh-plugin-resolver/main/docs/cases/resolver/before-readme.png) / [after](https://raw.githubusercontent.com/sakikoTGW/dsh-plugin-resolver/main/docs/cases/resolver/after-readme.png) |
 | README 减重 | 282 行、14 个二级章节、22 张图、6 个徽章 | 142 行、9 个二级章节、8 张图（含 4 个徽章）、第一人称来由 | `repo_verify` 84/B；README 统计见 `evidence.txt` |
 | 去掉模板腔 | 数据条、箭头链、重复 slogan、每节同一套排比 | 数字只在正文出现一次；没有 KPI 条；结尾是参考索引 | README v0.1.3 vs v0.1.6 |
-| 新增参考层 | 没有 docs 站点，agent 只能读 README | `agent.json` + `llms.txt` + 9 页 docs 参考站点 | [docs 首页](https://sakikoTGW.github.io/dsh-plugin-resolver/docs/)；[截图](https://raw.githubusercontent.com/sakikoTGW/dsh-plugin-resolver/main/docs/releases/v0.1.6/docs-site.png) |
+| 新增参考层 | 没有 docs 站点，agent 只能读 README | `agent.json` + `llms.txt` + 9 页 docs 参考站点 | [docs 首页](https://sakikoTGW.github.io/dsh-plugin-resolver/docs/)；[截图](https://raw.githubusercontent.com/sakikoTGW/dsh-plugin-resolver/main/docs/cases/resolver/docs-site.png) |
 | 参考索引 | 无 | README 末尾 `## 参考` 指向四工具、版本规则、安装路径、结构、证据、测试、限制、安全 | README 末尾 |
 | 发布报告 | 发版只有 release 一句话 | 本报告：before/after、素材、证据、已知问题 | 本文件 |
 
@@ -61,7 +62,7 @@ Compare: https://github.com/sakikoTGW/dsh-plugin-resolver/compare/v0.1.3...v0.1.
 
 - 版本测试从写死 `0.4.x` 改成任意 semver，npm latest 变化不再让测试假红。
 - `npm test` 仍是 45 项；`repo_verify` 从 81/B 到 84/B。
-- 新增 `docs/releases/v0.1.6.md` 和这份 before/after 素材，发版不再只有一句话。
+- 新增 `docs/cases/resolver.md` 和这份 before/after 素材，发版不再只有一句话。
 
 ## 和几天前（v0.1.3）的区别
 
@@ -85,11 +86,11 @@ Compare: https://github.com/sakikoTGW/dsh-plugin-resolver/compare/v0.1.3...v0.1.
 
 | 几天前 v0.1.3 | 现在 v0.1.6 |
 |---|---|
-| <img src="https://raw.githubusercontent.com/sakikoTGW/dsh-plugin-resolver/main/docs/releases/v0.1.6/before-readme.png" alt="v0.1.3 README 首屏"> | <img src="https://raw.githubusercontent.com/sakikoTGW/dsh-plugin-resolver/main/docs/releases/v0.1.6/after-readme.png" alt="v0.1.6 README 首屏"> |
+| <img src="https://raw.githubusercontent.com/sakikoTGW/dsh-plugin-resolver/main/docs/cases/resolver/before-readme.png" alt="v0.1.3 README 首屏"> | <img src="https://raw.githubusercontent.com/sakikoTGW/dsh-plugin-resolver/main/docs/cases/resolver/after-readme.png" alt="v0.1.6 README 首屏"> |
 
 图注：同一份 README 的首屏渲染；不是拿旧横幅重排，而是把 v0.1.3 的 README 实际渲染出来。
 
-![resolver docs 站点](https://raw.githubusercontent.com/sakikoTGW/dsh-plugin-resolver/main/docs/releases/v0.1.6/docs-site.png)
+![resolver docs 站点](https://raw.githubusercontent.com/sakikoTGW/dsh-plugin-resolver/main/docs/cases/resolver/docs-site.png)
 
 图注：README 末尾的参考索引，落到一个有左导航、agent/人两个入口的站点。
 
