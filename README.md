@@ -122,4 +122,18 @@ npm test   # 45 passing: 35 logic + 10 harness
 
 完整契约在 [`agent.json`](agent.json)，给 agent 的索引入口是 [`llms.txt`](llms.txt)。有问题来 [Issues](https://github.com/sakikoTGW/dsh-plugin-resolver/issues)，或者看 [dsh-plugins](https://github.com/sakikoTGW/dsh-plugins)。
 
+## 参考
+
+| 内容 | 位置 |
+|---|---|
+| 四个工具 | [docs/TOOLS.md](docs/TOOLS.md) |
+| 版本选择规则 | [docs/VERSION-SELECTION.md](docs/VERSION-SELECTION.md) |
+| 安装路径与重启判定 | [docs/INSTALL-PATHS.md](docs/INSTALL-PATHS.md) |
+| 结构 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
+| 效果与证据 | [docs/EVIDENCE.md](docs/EVIDENCE.md) · [BENCHMARK](BENCHMARK.md) · [ABLATION](ABLATION.md) |
+| 测试与 CI | [docs/TESTING.md](docs/TESTING.md) |
+| 已知限制 | [docs/LIMITATIONS.md](docs/LIMITATIONS.md) |
+| 反馈与安全 | [docs/SECURITY.md](docs/SECURITY.md) · [Issues](https://github.com/sakikoTGW/dsh-plugin-resolver/issues) |
+| License | [LICENSE](LICENSE) |
+
 <p align="center"><sub>MIT · <a href="https://github.com/deepseek-ai/deepseek-harness">DeepSeek Harness</a> · <a href="#">回到顶部</a></sub></p>

@@ -65,3 +65,14 @@ Ablation: ./ABLATION.md
 
 - Repository: https://github.com/sakikoTGW/dsh-plugin-resolver
 - Issues: https://github.com/sakikoTGW/dsh-plugin-resolver/issues
+
+## Reference docs
+
+- Four tools: ./docs/TOOLS.md
+- Version selection: ./docs/VERSION-SELECTION.md
+- Install paths and restarts: ./docs/INSTALL-PATHS.md
+- Architecture: ./docs/ARCHITECTURE.md
+- Evidence: ./docs/EVIDENCE.md
+- Tests and CI: ./docs/TESTING.md
+- Known limits: ./docs/LIMITATIONS.md
+- Feedback and security: ./docs/SECURITY.md

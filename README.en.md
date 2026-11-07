@@ -122,4 +122,18 @@ The machine-readable entry lives in [`agent.json`](agent.json) under `validation
 
 The full contract is in [`agent.json`](agent.json), and the agent index is [`llms.txt`](llms.txt). Issues go to [GitHub](https://github.com/sakikoTGW/dsh-plugin-resolver/issues); more plugins are in [dsh-plugins](https://github.com/sakikoTGW/dsh-plugins).
 
+## Reference
+
+| Topic | Where |
+|---|---|
+| Four tools | [docs/TOOLS.md](docs/TOOLS.md) |
+| Version selection | [docs/VERSION-SELECTION.md](docs/VERSION-SELECTION.md) |
+| Install paths and restarts | [docs/INSTALL-PATHS.md](docs/INSTALL-PATHS.md) |
+| Architecture | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
+| Evidence | [docs/EVIDENCE.md](docs/EVIDENCE.md) · [BENCHMARK](BENCHMARK.md) · [ABLATION](ABLATION.md) |
+| Tests and CI | [docs/TESTING.md](docs/TESTING.md) |
+| Known limits | [docs/LIMITATIONS.md](docs/LIMITATIONS.md) |
+| Feedback and security | [docs/SECURITY.md](docs/SECURITY.md) · [Issues](https://github.com/sakikoTGW/dsh-plugin-resolver/issues) |
+| License | [LICENSE](LICENSE) |
+
 <p align="center"><sub>MIT · <a href="https://github.com/deepseek-ai/deepseek-harness">DeepSeek Harness</a> · <a href="#">Back to top</a></sub></p>
