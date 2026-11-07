@@ -13,3 +13,5 @@ $ npm test
 45 passing
 
 docs pages: 9 (index + 8 reference pages)
+
+README first screens: before-readme.png / after-readme.png (1600x800 @2x, local render)
