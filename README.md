@@ -19,6 +19,8 @@
 
 这些判断每次都要重来。我把它们做进插件里，之后装插件就是一次工具调用。
 
+如果你就是 agent，先看 [`llms.txt`](llms.txt)，完整契约在 [`agent.json`](agent.json)。
+
 ## 这是它跑起来的样子
 
 <p align="center">
@@ -118,6 +120,6 @@ npm test   # 45 passing: 35 logic + 10 harness
 }
 ```
 
-完整契约在 [`agent.json`](agent.json)。有问题来 [Issues](https://github.com/sakikoTGW/dsh-plugin-resolver/issues)，或者看 [dsh-plugins](https://github.com/sakikoTGW/dsh-plugins)。
+完整契约在 [`agent.json`](agent.json)，给 agent 的索引入口是 [`llms.txt`](llms.txt)。有问题来 [Issues](https://github.com/sakikoTGW/dsh-plugin-resolver/issues)，或者看 [dsh-plugins](https://github.com/sakikoTGW/dsh-plugins)。
 
 <p align="center"><sub>MIT · <a href="https://github.com/deepseek-ai/deepseek-harness">DeepSeek Harness</a> · <a href="#">回到顶部</a></sub></p>

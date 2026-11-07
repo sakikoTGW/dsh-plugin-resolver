@@ -1,0 +1,67 @@
+# dsh-plugin-resolver
+
+> Agent-facing installer for DSH plugins. One tool call: search the catalog, settle same-name entries, pick a version the running DSH accepts, install from registry or GitHub source, and read the mount back.
+
+Canonical machine contract: ./agent.json
+Version: 0.1.6
+Host: DSH >=0.2.0-rc.2 <0.3.0 · Node >=20
+License: MIT
+
+## Install
+
+```
+dsh plugin --profile <profile> add dsh-plugin-resolver
+```
+
+Market index source (add as an index source, then install from Discover):
+
+```
+https://sakikoTGW.github.io/dsh-plugin-resolver/market/index.json
+```
+
+## Tools
+
+- `plugin_search` — read-only. Input: query. Returns catalog hits with owner, stars, npm name, install command, ambiguity flag.
+- `plugin_resolve` — read-only. Input: target. Returns package, install spec, registry, source-build requirement, notes.
+- `plugin_install` — writes profile, lockfile and plugin-sources. Input: target. Returns applied state, bundle/loader entry, restart decision, next step.
+- `plugin_status` — read-only. Returns installed bundles, loader entries, fiberPhase.
+
+Only `plugin_install` writes the environment.
+
+## Version rule
+
+- Running version: `@deepseek-ai/dsh-base` in `pluginManager.listBundles()`.
+- A declared `engines.dsh` is authoritative.
+- Without `engines.dsh`, every same-namespace `@deepseek-ai/dsh` / `@deepseek-ai/dsh-*` peer must accept the running version, optional peers included. Sibling libraries on other version lines are excluded.
+- Selection: first compatible version. An explicit version skips resolution.
+
+## Ambiguity
+
+Same-name entries stay visible. Supply `owner=` or a full spec; the plugin does not choose for you.
+
+## Restart
+
+Compare the bundle set and runtime file hashes; the plugin manager's application result is authoritative.
+
+## Validation
+
+```
+npm test
+```
+
+Expected: 45 passing (35 logic + 10 harness). CI: https://github.com/sakikoTGW/dsh-plugin-resolver/actions/workflows/test.yml
+
+Benchmark: ./BENCHMARK.md
+Ablation: ./ABLATION.md
+
+## Ecosystem
+
+- Hub: https://github.com/sakikoTGW/dsh-plugins
+- dsh.so: https://www.dsh.so/zh/artifact/dsh-plugin-resolver/
+- dshbase: https://dshbase.com/plugins/dsh-plugin-resolver/
+- Market index: https://sakikoTGW.github.io/dsh-plugin-resolver/market/index.json
+
+## Source
+
+- Repository: https://github.com/sakikoTGW/dsh-plugin-resolver
+- Issues: https://github.com/sakikoTGW/dsh-plugin-resolver/issues

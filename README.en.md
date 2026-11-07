@@ -19,6 +19,8 @@ I built this because handing plugin installs to an agent kept going wrong. The c
 
 Those checks were being redone every time. I put them into the plugin, so an install is one tool call.
 
+If you are the agent, start with [`llms.txt`](llms.txt). The full contract is in [`agent.json`](agent.json).
+
 ## Here it is running
 
 <p align="center">
@@ -118,6 +120,6 @@ The machine-readable entry lives in [`agent.json`](agent.json) under `validation
 }
 ```
 
-The full contract is in [`agent.json`](agent.json). Issues go to [GitHub](https://github.com/sakikoTGW/dsh-plugin-resolver/issues); more plugins are in [dsh-plugins](https://github.com/sakikoTGW/dsh-plugins).
+The full contract is in [`agent.json`](agent.json), and the agent index is [`llms.txt`](llms.txt). Issues go to [GitHub](https://github.com/sakikoTGW/dsh-plugin-resolver/issues); more plugins are in [dsh-plugins](https://github.com/sakikoTGW/dsh-plugins).
 
 <p align="center"><sub>MIT · <a href="https://github.com/deepseek-ai/deepseek-harness">DeepSeek Harness</a> · <a href="#">Back to top</a></sub></p>
