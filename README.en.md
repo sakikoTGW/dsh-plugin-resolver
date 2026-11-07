@@ -1,5 +1,5 @@
-﻿<p align="center">
-  <img src="assets/hero-promo.png" alt="DSH Plugin Resolver — install the right plugin in one call" width="100%">
+<p align="center">
+  <img src="assets/hero-en.png" alt="dsh-plugin-resolver: one call, the right plugin" width="100%">
 </p>
 
 <p align="center">
@@ -10,49 +10,45 @@
   <a href="https://www.npmjs.com/package/dsh-plugin-resolver"><img alt="npm" src="https://img.shields.io/npm/v/dsh-plugin-resolver?style=flat-square&color=4D6BFE&logo=npm&logoColor=white"></a>
   <a href="https://github.com/sakikoTGW/dsh-plugin-resolver/actions/workflows/test.yml"><img alt="test" src="https://img.shields.io/github/actions/workflow/status/sakikoTGW/dsh-plugin-resolver/test.yml?style=flat-square&label=test&color=2FBF71"></a>
   <img alt="45 checks" src="https://img.shields.io/badge/checks-45%20passing-2FBF71?style=flat-square">
-  <img alt="downloads" src="https://img.shields.io/npm/dm/dsh-plugin-resolver?style=flat-square&color=4D6BFE">
   <a href="LICENSE"><img alt="MIT" src="https://img.shields.io/badge/license-MIT-263146?style=flat-square"></a>
-  <img alt="DSH" src="https://img.shields.io/badge/DSH-0.2.0--rc.2%2B-4D6BFE?style=flat-square">
-  <img alt="Node" src="https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white">
 </p>
 
-<p align="center"><sub><b>45 checks</b> · <b>dsh.so L5 run-verified</b> · <b>dshbase Verified</b> · MIT · DSH ≥0.2.0-rc.2 &lt;0.3.0 · Node ≥20</sub></p>
+<p align="center"><sub>45 checks · dsh.so L5 run-verified · dshbase Verified · DSH ≥0.2.0-rc.2 &lt;0.3.0 · Node ≥20</sub></p>
 
-## What it does
+I built this because handing plugin installs to an agent kept going wrong. The community catalog is 8 MB and takes about 90 seconds to pull from GitHub Pages. There are 406 groups of same-name plugins; `dsh-browser` alone has nine owners. The `latest` tag doesn't always accept the running core, and when it doesn't, the host quietly disables the plugin on boot. GitHub-only repos often ship no build output, so `main` points at a file that doesn't exist and the plugin installs but never loads.
+
+Those checks were being redone every time. I put them into the plugin, so an install is one tool call.
+
+## Here it is running
 
 <p align="center">
   <img src="assets/effect-agent.gif" alt="A real DSH session: the agent searches, resolves, installs and verifies a plugin through resolver" width="100%">
 </p>
 
-<p align="center"><sub>Real DSH session: one instruction → <code>plugin_search</code> → <code>plugin_resolve</code> → <code>plugin_install</code> → <code>plugin_status</code>. Installed <code>dsh-ws-recency@0.26.0</code> and read back enabled / active.</sub></p>
+<p align="center"><sub>A real DSH session installing <code>dsh-ws-recency@0.26.0</code>. It searches, resolves the version, and reads the mount back.</sub></p>
 
-<p align="center"><b>45 → 6</b> tool calls · <b>0</b> failed retries · <b>20+ min → ~3 min</b> · <b>1.9 s</b> decision chain (9 calls)</p>
-
-Ablation removes the catalog cache, same-name disambiguation, compatible-version solving and post-install verification in turn; the outcomes are wrong version, wrong source, installed but not mounted, silent failure. Data: [ABLATION](ABLATION.md). Comparison: [BENCHMARK](BENCHMARK.md).
+Doing this by hand took 45 tool calls and over 20 minutes. The plugin does it in 6 calls and about 3 minutes, with no retries. The measurements and the ablation are in [BENCHMARK](BENCHMARK.md) and [ABLATION](ABLATION.md).
 
 ## Install
 
-| Plugin market (real UI) | npm (real terminal) |
+| Plugin market | npm |
 |---|---|
-| <img src="assets/install-market.gif" alt="Search and install dsh-plugin-resolver in the DSH plugin market" width="100%"> | <img src="assets/install-npm.gif" alt="Install dsh-plugin-resolver in a real terminal" width="100%"> |
-| Search → confirm → install → installed (restart to apply) | `npm install dsh-plugin-resolver` → added 1 package in 8s |
+| <img src="assets/install-market.gif" alt="Search and install dsh-plugin-resolver in the DSH plugin market" width="100%"> | <img src="assets/install-npm.gif" alt="Install dsh-plugin-resolver in a terminal" width="100%"> |
 
-Hand this to your agent:
+I usually just tell the agent:
 
 ```text
 Install dsh-plugin-resolver, then use it to install dsh-browser.
 ```
 
 <details>
-<summary>Manual paths</summary>
+<summary>Typing it yourself</summary>
 
 Market index source:
 
 ```text
 https://sakikoTGW.github.io/dsh-plugin-resolver/market/index.json
 ```
-
-npm / DSH host:
 
 ```sh
 dsh plugin --profile <profile> add dsh-plugin-resolver
@@ -68,44 +64,39 @@ dsh plugin --profile <profile> add github:sakikoTGW/dsh-plugin-resolver#<commit>
 
 ## How it works
 
-| Stage | Tool | Output |
+| Stage | Tool | What comes back |
 |---|---|---|
-| Search | `plugin_search` | Catalog hits, owner, stars, npm name, ambiguity marker |
-| Resolve | `plugin_resolve` | Package, install spec, registry, source-build requirement |
-| Install | `plugin_install` | Changes to profile / lockfile / plugin-sources |
+| Search | `plugin_search` | Catalog hits, owner, stars, npm name, ambiguity |
+| Resolve | `plugin_resolve` | Package, install spec, registry, source-build need |
+| Install | `plugin_install` | Changes to profile, lockfile, plugin-sources |
 | Verify | `plugin_status` | Bundle, loader entry, fiberPhase |
 | Report | return value | Applied state, restart decision, next step |
 
-`plugin_install` writes the environment; the other three tools are read-only.
+`plugin_install` writes the environment. The other three are read-only.
 
 ## Ecosystem
 
-- [dsh-plugins](https://github.com/sakikoTGW/dsh-plugins) — the plugin set
-- [dsh.so](https://www.dsh.so/zh/artifact/dsh-plugin-resolver/) — L5 run-verified
-- [dshbase](https://dshbase.com/plugins/dsh-plugin-resolver/) — Verified
-- [dshmarket](https://dshmarket.com) — market listing
+- [dsh-plugins](https://github.com/sakikoTGW/dsh-plugins): the plugin set and catalog
+- [dsh.so](https://www.dsh.so/zh/artifact/dsh-plugin-resolver/): L5 run-verified
+- [dshbase](https://dshbase.com/plugins/dsh-plugin-resolver/): Verified
 - Market index source: `https://sakikoTGW.github.io/dsh-plugin-resolver/market/index.json`
 
-## Capability matrix
+## What it covers
 
 | Capability | npm | GitHub-only | Explicit spec |
 |---|---|---|---|
 | Same-name disambiguation | ✓ | ✓ | ✓ |
-| Compatible version | ✓ | ✓ | Caller-specified |
+| Compatible version | ✓ | ✓ | Yours to give |
 | Source build | — | ✓ | Per spec |
-| Post-install verification | ✓ | ✓ | ✓ |
+| Post-install check | ✓ | ✓ | ✓ |
 | Restart decision | ✓ | ✓ | ✓ |
 
 ## Features
 
-- **Same-name disambiguation** — `plugin_search` returns every candidate with owner, stars, npm name and install command; the caller supplies `owner=` or a full spec.
-- **Compatible version** — `plugin_resolve` solves against `engines.dsh` and same-namespace peers, and returns a reviewable install spec.
-- **GitHub source** — when build output is missing it runs `pnpm install` / `pnpm run build`, then installs through `link:`.
-- **Post-install verification** — `plugin_status` reads back bundle, loader entry and fiberPhase; the plugin manager's application result drives the restart decision.
-
-<p align="center">
-  <img src="assets/feature-table.png" alt="The result table in a real session: search, resolve, install, verify" width="100%">
-</p>
+- It doesn't pick between same-name plugins for you. Search returns every candidate with owner, stars and npm name, and you pass `owner=` or a full spec.
+- Versions are solved against `engines.dsh` and same-namespace peers. What comes back is an install spec you can review first.
+- For GitHub-only packages with no build output, it runs `pnpm install` and `pnpm run build`, then installs through `link:`.
+- After install it reads back the bundle, loader entry and fiberPhase. The manager's actual result decides whether a restart is needed.
 
 ## Validation
 
@@ -113,27 +104,20 @@ dsh plugin --profile <profile> add github:sakikoTGW/dsh-plugin-resolver#<commit>
 npm test   # 45 passing: 35 logic + 10 harness
 ```
 
-The machine-readable validation entry lives in [`agent.json`](agent.json) under `validation`; CI lives in [test.yml](https://github.com/sakikoTGW/dsh-plugin-resolver/actions/workflows/test.yml).
+The machine-readable entry lives in [`agent.json`](agent.json) under `validation`. CI is in [test.yml](https://github.com/sakikoTGW/dsh-plugin-resolver/actions/workflows/test.yml).
 
-## Agent contract
+## Contract for agents
 
 ```json
 {
-  "tools": ["plugin_search (readOnly)", "plugin_resolve (readOnly)", "plugin_install (writes profile)", "plugin_status (readOnly)"],
-  "versionRule": "engines.dsh authoritative; otherwise same-namespace @deepseek-ai/dsh peers",
+  "tools": ["plugin_search", "plugin_resolve", "plugin_install", "plugin_status"],
+  "versionRule": "engines.dsh first; otherwise same-namespace @deepseek-ai/dsh peers",
   "ambiguity": "owner= or a full spec",
   "writes": ["profile", "lockfile", "plugin-sources"],
-  "restart": "plugin manager result is authoritative"
+  "restart": "plugin manager result"
 }
 ```
 
-Full contract: [`agent.json`](agent.json).
+The full contract is in [`agent.json`](agent.json). Issues go to [GitHub](https://github.com/sakikoTGW/dsh-plugin-resolver/issues); more plugins are in [dsh-plugins](https://github.com/sakikoTGW/dsh-plugins).
 
-## Closing
-
-One tool call, the right plugin.
-
-[npm](https://www.npmjs.com/package/dsh-plugin-resolver) · [GitHub](https://github.com/sakikoTGW/dsh-plugin-resolver) · [Issues](https://github.com/sakikoTGW/dsh-plugin-resolver/issues) · [dsh-plugins](https://github.com/sakikoTGW/dsh-plugins)
-
-<p align="center"><sub>Built for <a href="https://github.com/deepseek-ai/deepseek-harness">DeepSeek Harness</a> · MIT · <a href="#">Back to top ↑</a></sub></p>
-
+<p align="center"><sub>MIT · <a href="https://github.com/deepseek-ai/deepseek-harness">DeepSeek Harness</a> · <a href="#">Back to top</a></sub></p>

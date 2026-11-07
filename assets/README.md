@@ -7,7 +7,12 @@ README 用的视觉资产，全部是矢量或可重生成文件，随仓库一�
 | `logo.svg` | 图标 + 字标（浅色/深色背景都可读） | 其他物料、图标导出 |
 | `logo-dark.svg` | 字标为浅色的版本，给纯深色背景用 | 深色海报 |
 | `icon.svg` / `icon.png` | 64×64 应用图标（PNG 为 512×512） | 插件图标、社交头像 |
-| `banner.svg` / `banner.png` | 1280×400 横幅：定位句 + 三个数字 + 真实调用终端卡片 | **README 首屏**、发布帖、幻灯片 |
+| `hero-zh.png` / `hero-en.png` | 1600×800 README 首屏：大字、真实 DSH 窗口、公共领域寄居蟹版画水印 | **README 首屏** |
+| `effect-agent.gif` | 真实 DSH 会话：agent 用 resolver 搜索、解析、安装并校验插件 | README「这是它跑起来的样子」 |
+| `install-market.gif` | 真实插件市场搜索 → 确认 → 安装 | README「安装」 |
+| `install-npm.gif` | 真实终端 `npm install dsh-plugin-resolver` | README「安装」 |
+| `feature-table.png` | 真实会话里的安装结果表，hero 右侧窗口的原图 | hero 窗口 |
+| `banner.svg` / `banner.png` | 1280×400 横幅：定位句 + 三个数字 + 真实调用终端卡片 | 发布帖、幻灯片（旧首屏） |
 | `social-preview.svg` / `social-preview.png` | 1280×640 社交预览图 | GitHub **Settings → Social preview** 上传 |
 | `flow.svg` | 五阶段流程图：检索 → 解析 → 安装 → 校验 → 上报，含两条失败路径 | README「怎么工作」 |
 | `architecture.svg` | 稳定壳 + 热加载逻辑的两层结构 | README「结构」 |
@@ -21,7 +26,7 @@ README 用的视觉资产，全部是矢量或可重生成文件，随仓库一�
 | `market-dsh-market.png` | DSH 设置 → 插件市场 → 发现（搜索 plugin-resolve）截屏 | README「市场收录」 |
 | `icons/*.svg` | 四个工具的小图标（search / resolve / install / status） | README 工具表 |
 
-> `demo.gif`、`demo-resolve.gif`、`tool-*.png` 都是从真实运行输出渲染的，不含手写的假数据；宿主版本与捕获日期写在 README 的图注里。
+> `demo.gif`、`demo-resolve.gif`、`tool-*.png` 是从真实运行输出渲染的旧素材，已不参与 README；`hero-*.png` 里的寄居蟹版画来自 Pearson Scott Foresman（Wikimedia Commons / Openclipart，public domain），只作水印装饰。
 
 ## 重新生成
 
